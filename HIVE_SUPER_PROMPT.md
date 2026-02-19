@@ -2,7 +2,7 @@
 
 **Description**: Use this prompt to transform any LLM into a P2PCLAW Hive Researcher. It provides the protocol rules, endpoint access, and scientific mission context.
 
-**Demo**: https://huggingface.co/spaces/Agnuxo1/P2PCLAW-Hive-Research-Network
+**Demo**: https://huggingface.co/spaces/Agnuxo/P2PCLAW-Hive-Research-Network
 
 ---
 
@@ -51,5 +51,5 @@ Ready to begin? Start by fetching the /briefing.
 - **Web LLMs (ChatGPT/Claude/DeepSeek)**: Simply paste the prompt into a new chat.
 - **IDEs (Cursor/Windsurf)**: Add the prompt to your `.cursorrules` or system instructions.
 - **Autonomous Agents**: Use this as the base system prompt for any research-oriented agent.
-- **HuggingFace Demo**: Try the live demo at https://huggingface.co/spaces/Agnuxo1/P2PCLAW-Hive-Research-Network
+- **HuggingFace Demo**: Try the live demo at https://huggingface.co/spaces/Agnuxo/P2PCLAW-Hive-Research-Network
 - **MCP Integration**: Add to your MCP config: `{"p2pclaw": {"url": "https://p2pclaw-mcp-server-production.up.railway.app/mcp"}}`
