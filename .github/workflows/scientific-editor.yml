@@ -1,0 +1,124 @@
+name: P2PCLAW Scientific Editor
+
+on:
+  schedule:
+    - cron: "0 */5 * * *"   # every 5 hours
+  workflow_dispatch:
+
+env:
+  GATEWAY: https://p2pclaw-mcp-server-production.up.railway.app
+  TOGETHER_KEY_1: ${{ secrets.TOGETHER_KEY_1 || 'key_CNjD1owwopSAJTbzMsZQJ' }}
+  TOGETHER_KEY_2: ${{ secrets.TOGETHER_KEY_2 || 'key_CYK7FJiMUTTtmsDQyqVv9' }}
+  TOGETHER_KEY_3: ${{ secrets.TOGETHER_KEY_3 || 'key_CYK7TmK5mXMvTPzhhgSTj' }}
+  TOGETHER_KEY_4: ${{ secrets.TOGETHER_KEY_4 || 'key_CYK7ZufJmEqn6PDcxs6KN' }}
+  TOGETHER_KEY_5: ${{ secrets.TOGETHER_KEY_5 || 'key_CYK7sn68vHaaYMxNh7eSS' }}
+  TOGETHER_KEY_6: ${{ secrets.TOGETHER_KEY_6 || 'key_CYK825iWqhWEPNCfYR3rN' }}
+
+jobs:
+  editor-citations:
+    name: Dr. Marco Ferreira — Citations
+    runs-on: ubuntu-latest
+    timeout-minutes: 280
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r p2pclaw-mcp-server/editor/requirements.txt
+      - name: Run citation enhancer
+        env:
+          AGENT_ID: editor-citations
+          IA_ACCESS: ${{ secrets.IA_ACCESS }}
+          IA_SECRET: ${{ secrets.IA_SECRET }}
+        run: python p2pclaw-mcp-server/editor/scientific_editor.py
+
+  editor-structure:
+    name: Dr. Aiko Tanaka — Structure
+    runs-on: ubuntu-latest
+    timeout-minutes: 280
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r p2pclaw-mcp-server/editor/requirements.txt
+      - name: Run structure editor
+        env:
+          AGENT_ID: editor-structure
+          IA_ACCESS: ${{ secrets.IA_ACCESS }}
+          IA_SECRET: ${{ secrets.IA_SECRET }}
+        run: python p2pclaw-mcp-server/editor/scientific_editor.py
+
+  editor-stats:
+    name: Dr. Priya Sharma — Statistics
+    runs-on: ubuntu-latest
+    timeout-minutes: 280
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r p2pclaw-mcp-server/editor/requirements.txt
+      - name: Run statistical reviewer
+        env:
+          AGENT_ID: editor-stats
+          IA_ACCESS: ${{ secrets.IA_ACCESS }}
+          IA_SECRET: ${{ secrets.IA_SECRET }}
+        run: python p2pclaw-mcp-server/editor/scientific_editor.py
+
+  editor-narrative:
+    name: Dr. James Okoro — Writing
+    runs-on: ubuntu-latest
+    timeout-minutes: 280
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r p2pclaw-mcp-server/editor/requirements.txt
+      - name: Run narrative writer
+        env:
+          AGENT_ID: editor-narrative
+          IA_ACCESS: ${{ secrets.IA_ACCESS }}
+          IA_SECRET: ${{ secrets.IA_SECRET }}
+        run: python p2pclaw-mcp-server/editor/scientific_editor.py
+
+  editor-archivist:
+    name: ARIA-Archive — PDF & Archive
+    runs-on: ubuntu-latest
+    timeout-minutes: 280
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r p2pclaw-mcp-server/editor/requirements.txt
+      - name: Run PDF archivist
+        env:
+          AGENT_ID: editor-archivist
+          IA_ACCESS: ${{ secrets.IA_ACCESS }}
+          IA_SECRET: ${{ secrets.IA_SECRET }}
+        run: python p2pclaw-mcp-server/editor/scientific_editor.py
+
+  editor-validator:
+    name: PEER-X — LLM Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 280
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: pip install -r p2pclaw-mcp-server/editor/requirements.txt
+      - name: Run LLM validator
+        env:
+          AGENT_ID: editor-validator
+          IA_ACCESS: ${{ secrets.IA_ACCESS }}
+          IA_SECRET: ${{ secrets.IA_SECRET }}
+        run: python p2pclaw-mcp-server/editor/scientific_editor.py

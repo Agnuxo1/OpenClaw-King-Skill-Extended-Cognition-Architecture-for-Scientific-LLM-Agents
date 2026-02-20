@@ -1,0 +1,158 @@
+name: Kaggle Research Nodes — Auto Relaunch
+
+# Relaunch all 5 P2PCLAW Kaggle kernels every 11h
+# (Kaggle max runtime is 12h, so this keeps them always running)
+# All kernels run under account: agnuxooutlookagnuxo
+# Required secret: KAGGLE_JSON_AGNUXO = contents of kaggle.json for agnuxooutlookagnuxo
+
+on:
+    schedule:
+        - cron: "0 */11 * * *"   # every 11 hours
+    workflow_dispatch:             # manual trigger
+
+jobs:
+
+    # ──────────────────────────────────────────────
+    # Node 1: Quantum & Computational Science
+    # https://www.kaggle.com/code/agnuxooutlookagnuxo/p2pclaw-quantum-team
+    # ──────────────────────────────────────────────
+    kaggle-quantum:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Kaggle CLI
+              run: pip install kaggle --quiet
+
+            - name: Write kaggle.json
+              run: |
+                  mkdir -p ~/.kaggle
+                  echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
+                  chmod 600 ~/.kaggle/kaggle.json
+
+            - name: Copy team scripts to kernel folder
+              run: |
+                  cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
+                     p2pclaw-mcp-server/kaggle-nodes/kernels/agnuxo/kaggle_research_node.py
+                  cp p2pclaw-mcp-server/kaggle-nodes/agnuxo_team.py \
+                     p2pclaw-mcp-server/kaggle-nodes/kernels/agnuxo/agnuxo_team.py
+
+            - name: Push kernel (quantum team)
+              working-directory: p2pclaw-mcp-server/kaggle-nodes/kernels/agnuxo
+              run: PYTHONUTF8=1 kaggle kernels push -p .
+
+    # ──────────────────────────────────────────────
+    # Node 2: Materials & Energy Science
+    # https://www.kaggle.com/code/agnuxooutlookagnuxo/p2pclaw-materials-team
+    # ──────────────────────────────────────────────
+    kaggle-materials:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Kaggle CLI
+              run: pip install kaggle --quiet
+
+            - name: Write kaggle.json
+              run: |
+                  mkdir -p ~/.kaggle
+                  echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
+                  chmod 600 ~/.kaggle/kaggle.json
+
+            - name: Copy team scripts to kernel folder
+              run: |
+                  cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
+                     p2pclaw-mcp-server/kaggle-nodes/kernels/charlysmith/kaggle_research_node.py
+                  cp p2pclaw-mcp-server/kaggle-nodes/charlysmith_team.py \
+                     p2pclaw-mcp-server/kaggle-nodes/kernels/charlysmith/charlysmith_team.py
+
+            - name: Push kernel (materials team)
+              working-directory: p2pclaw-mcp-server/kaggle-nodes/kernels/charlysmith
+              run: PYTHONUTF8=1 kaggle kernels push -p .
+
+    # ──────────────────────────────────────────────
+    # Node 3: Neuroscience & Cognitive AI
+    # https://www.kaggle.com/code/agnuxooutlookagnuxo/p2pclaw-neuro-team
+    # ──────────────────────────────────────────────
+    kaggle-neuro:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Kaggle CLI
+              run: pip install kaggle --quiet
+
+            - name: Write kaggle.json
+              run: |
+                  mkdir -p ~/.kaggle
+                  echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
+                  chmod 600 ~/.kaggle/kaggle.json
+
+            - name: Copy team scripts to kernel folder
+              run: |
+                  cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
+                     p2pclaw-mcp-server/kaggle-nodes/kernels/escritoresanalfabeto/kaggle_research_node.py
+                  cp p2pclaw-mcp-server/kaggle-nodes/escritoresanalfabeto_team.py \
+                     p2pclaw-mcp-server/kaggle-nodes/kernels/escritoresanalfabeto/escritoresanalfabeto_team.py
+
+            - name: Push kernel (neuro team)
+              working-directory: p2pclaw-mcp-server/kaggle-nodes/kernels/escritoresanalfabeto
+              run: PYTHONUTF8=1 kaggle kernels push -p .
+
+    # ──────────────────────────────────────────────
+    # Node 4: Mathematics & Theoretical CS
+    # https://www.kaggle.com/code/agnuxooutlookagnuxo/p2pclaw-math-team
+    # ──────────────────────────────────────────────
+    kaggle-math:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Kaggle CLI
+              run: pip install kaggle --quiet
+
+            - name: Write kaggle.json
+              run: |
+                  mkdir -p ~/.kaggle
+                  echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
+                  chmod 600 ~/.kaggle/kaggle.json
+
+            - name: Copy team scripts to kernel folder
+              run: |
+                  cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
+                     p2pclaw-mcp-server/kaggle-nodes/kernels/karmakindle/kaggle_research_node.py
+                  cp p2pclaw-mcp-server/kaggle-nodes/karmakindle_team.py \
+                     p2pclaw-mcp-server/kaggle-nodes/kernels/karmakindle/karmakindle_team.py
+
+            - name: Push kernel (math team)
+              working-directory: p2pclaw-mcp-server/kaggle-nodes/kernels/karmakindle
+              run: PYTHONUTF8=1 kaggle kernels push -p .
+
+    # ──────────────────────────────────────────────
+    # Node 5: Astrophysics, Cosmology & Advanced AI
+    # https://www.kaggle.com/code/agnuxooutlookagnuxo/p2pclaw-astro-team
+    # ──────────────────────────────────────────────
+    kaggle-astro:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install Kaggle CLI
+              run: pip install kaggle --quiet
+
+            - name: Write kaggle.json
+              run: |
+                  mkdir -p ~/.kaggle
+                  echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
+                  chmod 600 ~/.kaggle/kaggle.json
+
+            - name: Copy team scripts to kernel folder
+              run: |
+                  cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
+                     p2pclaw-mcp-server/kaggle-nodes/kernels/nebulaagi/kaggle_research_node.py
+                  cp p2pclaw-mcp-server/kaggle-nodes/nebulaagi_team.py \
+                     p2pclaw-mcp-server/kaggle-nodes/kernels/nebulaagi/nebulaagi_team.py
+
+            - name: Push kernel (astro team)
+              working-directory: p2pclaw-mcp-server/kaggle-nodes/kernels/nebulaagi
+              run: PYTHONUTF8=1 kaggle kernels push -p .
