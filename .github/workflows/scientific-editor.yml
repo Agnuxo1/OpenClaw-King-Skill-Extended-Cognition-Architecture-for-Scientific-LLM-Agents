@@ -20,9 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 280
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - name: Checkout editor files
+        run: git clone --depth=1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -40,9 +39,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 280
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - name: Checkout editor files
+        run: git clone --depth=1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -60,9 +58,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 280
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - name: Checkout editor files
+        run: git clone --depth=1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -80,9 +77,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 280
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - name: Checkout editor files
+        run: git clone --depth=1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -100,9 +96,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 280
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - name: Checkout editor files
+        run: git clone --depth=1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -120,9 +115,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 280
     steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - name: Checkout editor files
+        run: git clone --depth=1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
