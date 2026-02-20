@@ -7,12 +7,17 @@ on:
 
 env:
   GATEWAY: https://p2pclaw-mcp-server-production.up.railway.app
-  TOGETHER_KEY_1: ${{ secrets.TOGETHER_KEY_1 || 'key_CNjD1owwopSAJTbzMsZQJ' }}
-  TOGETHER_KEY_2: ${{ secrets.TOGETHER_KEY_2 || 'key_CYK7FJiMUTTtmsDQyqVv9' }}
-  TOGETHER_KEY_3: ${{ secrets.TOGETHER_KEY_3 || 'key_CYK7TmK5mXMvTPzhhgSTj' }}
-  TOGETHER_KEY_4: ${{ secrets.TOGETHER_KEY_4 || 'key_CYK7ZufJmEqn6PDcxs6KN' }}
-  TOGETHER_KEY_5: ${{ secrets.TOGETHER_KEY_5 || 'key_CYK7sn68vHaaYMxNh7eSS' }}
-  TOGETHER_KEY_6: ${{ secrets.TOGETHER_KEY_6 || 'key_CYK825iWqhWEPNCfYR3rN' }}
+  # Together.ai keys (set in Secrets → Settings → Actions)
+  TOGETHER_KEY_1: ${{ secrets.TOGETHER_KEY_1 }}
+  TOGETHER_KEY_2: ${{ secrets.TOGETHER_KEY_2 }}
+  TOGETHER_KEY_3: ${{ secrets.TOGETHER_KEY_3 }}
+  TOGETHER_KEY_4: ${{ secrets.TOGETHER_KEY_4 }}
+  TOGETHER_KEY_5: ${{ secrets.TOGETHER_KEY_5 }}
+  TOGETHER_KEY_6: ${{ secrets.TOGETHER_KEY_6 }}
+  # Groq fallback — free tier: console.groq.com (14,400 req/min)
+  GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+  # HF token for HF Inference Router fallback (add as Secret: HF_TOKEN)
+  HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
 jobs:
   editor-citations:
