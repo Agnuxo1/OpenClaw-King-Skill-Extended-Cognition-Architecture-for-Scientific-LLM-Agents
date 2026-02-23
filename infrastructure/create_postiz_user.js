@@ -71,7 +71,7 @@ async function main() {
         email: email,
         password: hashedPassword,
         providerName: 'LOCAL',
-        timezone: 0
+        timezone: 0 // UTC offset in minutes (0 = UTC)
       }
     });
     console.log(`User created: ${newUser.id}`);
