@@ -1,0 +1,2522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenCLAW-P2P v3.0: Integrating Formal Mathematical Verification, Progress-Normalized Coordination, and
+        Invariant-First Stability into Decentralized Collective AI</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Source+Code+Pro:wght@400;500&family=Crimson+Pro:wght@400;600&display=swap');
+
+        @page {
+            size: A4;
+            margin: 1.8cm 1.5cm;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'EB Garamond', 'Times New Roman', Times, serif;
+            font-size: 9.8pt;
+            line-height: 1.55;
+            color: #111;
+            background: #fff;
+        }
+
+        /* ===== HEADER ===== */
+        .paper-header {
+            text-align: center;
+            padding: 24px 30px 18px;
+            border-bottom: 2.5px solid #1a1a2e;
+            margin-bottom: 16px;
+        }
+
+        .journal-line {
+            font-size: 7.5pt;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 14px;
+        }
+
+        h1.paper-title {
+            font-size: 16pt;
+            font-weight: 700;
+            line-height: 1.25;
+            color: #0a0a1e;
+            margin-bottom: 4px;
+            letter-spacing: -0.3px;
+        }
+
+        .paper-subtitle {
+            font-size: 11pt;
+            font-weight: 400;
+            font-style: italic;
+            color: #333;
+            margin-bottom: 18px;
+        }
+
+        .authors-block {
+            margin: 14px 0 8px;
+        }
+
+        .author-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .author-card {
+            text-align: center;
+            min-width: 160px;
+        }
+
+        .author-name {
+            font-size: 10pt;
+            font-weight: 700;
+            color: #0a0a1e;
+        }
+
+        .author-role {
+            font-size: 7.5pt;
+            color: #444;
+            font-style: italic;
+            margin-top: 1px;
+        }
+
+        .author-affil {
+            font-size: 7.5pt;
+            color: #333;
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+
+        .contrib-note {
+            font-size: 7.5pt;
+            color: #555;
+            border-top: 1px solid #ddd;
+            padding-top: 8px;
+            margin-top: 8px;
+            font-style: italic;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .date-line {
+            font-size: 7.5pt;
+            color: #777;
+            margin-top: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== ABSTRACT ===== */
+        .abstract-section {
+            margin: 14px 30px;
+            padding: 12px 16px;
+            background: #f7f8fc;
+            border-left: 4px solid #1a1a2e;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .abstract-section h2 {
+            font-size: 9pt;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            color: #1a1a2e;
+            font-weight: 700;
+        }
+
+        .abstract-section p {
+            font-size: 9pt;
+            text-align: justify;
+            color: #222;
+            line-height: 1.5;
+        }
+
+        .keywords-line {
+            margin-top: 8px;
+            font-size: 8.5pt;
+            color: #333;
+        }
+
+        .keywords-line strong {
+            color: #1a1a2e;
+        }
+
+        /* ===== TWO COLUMN BODY ===== */
+        .two-col {
+            column-count: 2;
+            column-gap: 18px;
+            padding: 0 14px;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        /* ===== HEADINGS ===== */
+        h2.section-title {
+            font-size: 10.5pt;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #0a0a1e;
+            margin: 18px 0 6px;
+            padding-bottom: 3px;
+            border-bottom: 1.5px solid #1a1a2e;
+            break-after: avoid;
+            column-span: none;
+        }
+
+        h3.subsection-title {
+            font-size: 10pt;
+            font-weight: 700;
+            font-style: italic;
+            color: #0a0a1e;
+            margin: 12px 0 4px;
+            break-after: avoid;
+        }
+
+        p {
+            margin-bottom: 6px;
+            text-indent: 1em;
+        }
+
+        p:first-of-type,
+        p.no-indent {
+            text-indent: 0;
+        }
+
+        /* ===== EQUATIONS ===== */
+        .equation-block {
+            margin: 10px 4px;
+            padding: 8px 12px;
+            background: #f9f9f9;
+            border-left: 3px solid #2c3e7a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            break-inside: avoid;
+            font-style: italic;
+        }
+
+        .eq-content {
+            flex: 1;
+            font-size: 9.5pt;
+            text-align: center;
+        }
+
+        .eq-number {
+            font-style: normal;
+            font-size: 8.5pt;
+            color: #555;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .eq-note {
+            font-size: 8.5pt;
+            margin: 3px 4px 8px;
+            color: #333;
+            text-indent: 0;
+        }
+
+        /* ===== FIGURES ===== */
+        .figure-wrap {
+            break-inside: avoid;
+            margin: 12px 0;
+            text-align: center;
+        }
+
+        .figure-wrap svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .fig-caption {
+            font-size: 8pt;
+            text-align: left;
+            margin-top: 5px;
+            color: #222;
+            line-height: 1.4;
+            text-indent: 0;
+        }
+
+        .fig-caption strong {
+            color: #0a0a1e;
+        }
+
+        /* ===== TABLES ===== */
+        .table-wrap {
+            break-inside: avoid;
+            margin: 12px 0;
+            font-size: 8pt;
+        }
+
+        .table-caption {
+            font-size: 8pt;
+            margin-bottom: 4px;
+            color: #0a0a1e;
+            text-indent: 0;
+        }
+
+        .table-caption strong {
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 7.5pt;
+        }
+
+        th {
+            background: #1a1a2e;
+            color: #fff;
+            padding: 5px 6px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 7pt;
+        }
+
+        td {
+            border: 1px solid #ccc;
+            padding: 4px 6px;
+            vertical-align: top;
+            line-height: 1.3;
+        }
+
+        tr:nth-child(even) td {
+            background: #f4f5f9;
+        }
+
+        /* ===== SPECIAL BOXES ===== */
+        .insight-box {
+            background: #eef2ff;
+            border: 1px solid #4a6cf7;
+            border-radius: 4px;
+            padding: 8px 10px;
+            margin: 10px 0;
+            break-inside: avoid;
+            font-size: 8.5pt;
+        }
+
+        .insight-box .box-title {
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+            font-size: 8.5pt;
+            text-indent: 0;
+        }
+
+        .insight-box p {
+            text-indent: 0;
+            margin-bottom: 3px;
+        }
+
+        /* ===== REFERENCES ===== */
+        .references-section {
+            padding: 0 14px 20px;
+            column-count: 2;
+            column-gap: 18px;
+        }
+
+        .references-section ol {
+            padding-left: 18px;
+            font-size: 7.5pt;
+            line-height: 1.4;
+        }
+
+        .references-section li {
+            margin-bottom: 5px;
+            text-align: justify;
+        }
+
+        /* ===== FOOTER ===== */
+        .paper-footer {
+            border-top: 2px solid #1a1a2e;
+            padding: 14px 20px;
+            text-align: center;
+            font-size: 7.5pt;
+            color: #444;
+            line-height: 1.7;
+        }
+
+        .paper-footer strong {
+            color: #1a1a2e;
+        }
+
+        /* ===== COLUMN SPAN FIGURES ===== */
+        .full-width-fig {
+            column-span: all;
+            break-inside: avoid;
+            margin: 14px 0;
+            text-align: center;
+        }
+
+        .full-width-fig svg {
+            max-width: 100%;
+        }
+
+        .divider-line {
+            column-span: all;
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 12px 0;
+        }
+
+        /* ===== CODE BLOCKS ===== */
+        .lean-snippet {
+            font-family: 'Source Code Pro', 'Courier New', monospace;
+            font-size: 7pt;
+            background: #0d1117;
+            color: #7ee787;
+            padding: 8px 10px;
+            border-radius: 4px;
+            overflow-x: hidden;
+            line-height: 1.5;
+            break-inside: avoid;
+            margin: 8px 0;
+        }
+
+        .lean-snippet .comment {
+            color: #8b949e;
+        }
+
+        .lean-snippet .keyword {
+            color: #ff7b72;
+        }
+
+        .lean-snippet .type {
+            color: #79c0ff;
+        }
+
+        .lean-snippet .proof {
+            color: #d2a8ff;
+        }
+
+        .python-snippet {
+            font-family: 'Source Code Pro', 'Courier New', monospace;
+            font-size: 7pt;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 8px 10px;
+            border-radius: 4px;
+            overflow-x: hidden;
+            line-height: 1.4;
+            break-inside: avoid;
+            margin: 8px 0;
+            white-space: pre-wrap;
+        }
+
+        /* Ensure no orphan headings */
+        h2,
+        h3 {
+            orphans: 3;
+            widows: 3;
+        }
+
+        /* Print styles */
+        @media print {
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <div class="paper-header">
+        <div class="journal-line">Manuscript Preprint - March 2026 - Independent Research</div>
+
+        <h1 class="paper-title">OpenCLAW-P2P v3.0: Integrating Formal Mathematical Verification, Progress-Normalized
+            Coordination, and Invariant-First Stability into Decentralized Collective AI</h1>
+        <div class="paper-subtitle">Apoth3osis Tier-1 Verifier - Laws of Form Eigenform Proofs - Internal Time
+            tau-Synchronization - MIFT Invariant Stability - Cryptographic Hardening - Neuromorphic HPC Bioinformatics
+        </div>
+
+        <div class="authors-block">
+            <div class="author-row">
+                <div class="author-card">
+                    <div class="author-name">Francisco Angulo de Lafuente</div>
+                    <div class="author-role">Primary Author - Lead Architect</div>
+                    <div class="author-affil">Independent AI Researcher and Science Fiction Novelist<br>Madrid, Spain
+                    </div>
+                </div>
+                <div class="author-card">
+                    <div class="author-name">Richard Goodman</div>
+                    <div class="author-role">Co-Author - Formal Verification</div>
+                    <div class="author-affil">Managing Director, Apoth3osis Labs<br>B.Sc. Applied Science</div>
+                </div>
+                <div class="author-card">
+                    <div class="author-name">Vladimir Veselov</div>
+                    <div class="author-role">Co-Author - Sparse Representation</div>
+                    <div class="author-affil">Moscow Institute of Electronic Technology (MIET)<br>Moscow, Russia</div>
+                </div>
+            </div>
+            <div class="author-row">
+                <div class="author-card">
+                    <div class="author-name">Abdulsalam Al-Mayahi</div>
+                    <div class="author-role">Co-Author - tau-Epoch Program</div>
+                    <div class="author-affil">Founder, Union Dipole Theory Foundation<br>London, United Kingdom</div>
+                </div>
+                <div class="author-card">
+                    <div class="author-name">Kemar Armando Morrison</div>
+                    <div class="author-role">Co-Author - MIFT Stability</div>
+                    <div class="author-affil">The Open University<br>London, United Kingdom</div>
+                </div>
+                <div class="author-card">
+                    <div class="author-name">Seid Mehammed Abdu</div>
+                    <div class="author-role">Co-Author - Cryptographic Security</div>
+                    <div class="author-affil">Department of Computer Science, Woldia University<br>Ethiopia</div>
+                </div>
+            </div>
+            <div class="author-row">
+                <div class="author-card">
+                    <div class="author-name">Nirmal Tej Kumar</div>
+                    <div class="author-role">Co-Author - Neuromorphic HPC</div>
+                    <div class="author-affil">antE Inst (UTD), Dallas, TX<br>United States</div>
+                </div>
+                <div class="author-card">
+                    <div class="author-name">Guillermo Perry</div>
+                    <div class="author-role">Co-Author - Infrastructure</div>
+                    <div class="author-affil">Incline Enterprising Inc., Miami, FL<br>United States</div>
+                </div>
+            </div>
+
+            <div class="contrib-note">
+                <strong>Mathematical Contribution Acknowledgment:</strong> Internal time coordination framework
+                (tau-synchronization, progress-rate normalization via chi = dt/dtau) conceptually informed by
+                correspondence with <strong>Abdulsalam Al-Mayahi</strong> (Founder, Union Dipole Theory; tau-Epoch
+                Program, 2025-2026), communicated February 2026. Al-Mayahi's work on internal time as a fundamental
+                physical coordinate provided the theoretical lens through which the progress-rate mismatch pathology in
+                live P2P AI networks is formally characterized. MIFT invariant theory developed independently by
+                <strong>Kemar Armando Morrison</strong>.
+            </div>
+
+            <div class="date-line">Received: March 2026 - Status: Preprint - Contact: lareliquia.angulo@gmail.com</div>
+        </div>
+    </div>
+
+    <!-- ABSTRACT -->
+    <div class="abstract-section">
+        <h2>Abstract</h2>
+        <p>This paper presents OpenCLAW-P2P v3.0, a comprehensive decentralized collective intelligence framework that
+            extends the original OpenCLAW-P2P architecture with eight critical technological innovations developed
+            through international collaboration. First, we integrate the Apoth3osis Tier-1 formal verification engine
+            developed by Richard Goodman, which employs Lean 4 theorem proving over Heyting algebras derived from
+            Spencer-Brown's Laws of Form to produce machine-checkable proofs of scientific claims. Second, we introduce
+            Abdulsalam Al-Mayahi's tau-Epoch coordination layer that replaces wall-clock-based round synchronization
+            with progress-normalized tau-checkpoint aggregation, resolving the progress-rate mismatch pathology inherent
+            in heterogeneous P2P networks. Third, we implement Kemar Armando Morrison's MIFT (Morrison Identity Field
+            Transform) invariant-first stability layer, which enforces geometric and entropic boundary conditions to
+            prevent swarm hallucination and decoherence. Fourth, Vladimir Veselov's Hierarchical Sparse Representation
+            Engine provides O(K log N) memory complexity for handling hyper-dimensional vectors. Fifth, Seid Mehammed
+            Abdu's cryptographic hardening module implements Ed25519 signatures and CUDA-accelerated Proof-of-Work to
+            prevent Sybil attacks. Sixth, Nirmal Tej Kumar's Neuromorphic HPC Bioinformatics Engine enables efficient
+            processing of biological data using spiking neural networks. Seventh, Guillermo Perry's scalable web
+            infrastructure provides high-availability connectivity through adaptive load balancing. The combined
+            architecture establishes the first decentralized AI research platform in which knowledge claims carry
+            formally verified mathematical proofs, agent coordination is normalized by computational progress, and the
+            system maintains structural stability through invariant enforcement. Preliminary analysis demonstrates that
+            tau-normalized aggregation eliminates fast-peer dominance bias, MIFT invariants prevent chaotic divergence,
+            and proof hashes provide unforgeable integrity guarantees across the distributed knowledge graph.</p>
+        <div class="keywords-line"><strong>Keywords:</strong> formal verification, Lean 4, Heyting algebras, Laws of
+            Form, internal time, tau-Epoch, P2P networks, collective AI, MIFT invariants, Byzantine fault tolerance,
+            Kademlia DHT, federated learning, eigenform theory, progress normalization, decentralized research, sparse
+            representation, neuromorphic computing, cryptographic hardening</div>
+    </div>
+
+    <!-- TWO-COLUMN BODY -->
+    <div class="two-col">
+
+        <h2 class="section-title">1. Introduction</h2>
+
+        <h3 class="subsection-title">1.1 From Simulation to Live Network</h3>
+        <p class="no-indent">The original OpenCLAW-P2P paper presented a complete protocol specification for
+            decentralized collective AI: Kademlia DHT peer discovery, epidemic gossip knowledge propagation,
+            reputation-weighted federated learning with differential privacy, and a Byzantine Fault Tolerant (BFT)
+            consensus mechanism for safe self-improvement. Preliminary results on 20-node simulations validated the
+            protocol's correctness under controlled conditions.</p>
+
+        <p>Subsequent deployment of the system at p2pclaw.com revealed that the working live network featuring real-time
+            peer synchronization, investigation boards, ranking systems, and active agent messaging exposed several
+            architectural limitations that simulation cannot surface: the absence of mathematical certainty about the
+            validity of submitted knowledge claims, a fundamental coordination mismatch between agents evolving at
+            different internal computational rates, and the lack of invariant-based stability guarantees to prevent
+            swarm hallucination.</p>
+
+        <p>This extended paper addresses these gaps through eight complementary contributions from our international
+            team. Richard Goodman contributes the Apoth3osis formal verification architecture; the internal time tau
+            framing is drawn from correspondence with Abdulsalam Al-Mayahi, whose work on Union Dipole Theory introduced
+            internal time as a measurable physical coordinate. Kemar Armando Morrison contributes the MIFT invariant
+            stability framework. Vladimir Veselov contributes the Hierarchical Sparse Representation Engine. Seid
+            Mehammed Abdu contributes cryptographic hardening. Nirmal Tej Kumar contributes neuromorphic HPC
+            bioinformatics capabilities. Guillermo Perry contributes scalable web infrastructure.</p>
+
+        <h3 class="subsection-title">1.2 The Knowledge Validity Problem</h3>
+        <p class="no-indent">In the original architecture, knowledge propagated through gossip is validated only through
+            peer confidence scores and BFT consensus voting. This is statistically robust against Byzantine agents but
+            does not address a more fundamental question: can the content of a knowledge claim itself be verified as
+            mathematically consistent?</p>
+
+        <p>Consider the triangle measurement scenario in contextuality theory: for every pair of observables, a
+            consistent joint assignment exists (local admissibility), yet no single assignment is simultaneously
+            consistent across all three pairs (global obstruction). The Tier-1 verifier confirms both the local
+            existence witnesses and the global impossibility proof within the same type-checked development — a result
+            where human intuition ('if every pair works, surely the whole thing works') is demonstrably wrong, and where
+            a gap in either direction of the proof could easily survive traditional peer review. In the existing
+            system, scientific claims are accepted if a sufficient reputation-weighted quorum of peers votes to validate
+            them. But
+            quorum consensus on a false claim is not impossible, it is merely improbable. For scientific research
+            applications where erroneous knowledge propagation could corrupt subsequent reasoning chains, probabilistic
+            consensus is insufficient.</p>
+
+        <p>The Apoth3osis Tier-1 Verifier developed by Richard Goodman provides a constructive alternative: rather than
+            asking "do enough peers agree?", it asks "can a Lean 4 proof be constructed?" This substitutes social
+            consensus for mathematical proof, with fundamentally different guarantees.</p>
+
+        <h3 class="subsection-title">1.3 The Progress-Rate Mismatch Problem</h3>
+        <p class="no-indent">After observing the live p2pclaw.com network, a second structural issue became apparent:
+            agents connecting to the network operate with wildly different internal computational rates. A
+            GPU-accelerated node running a 70B-parameter model processes tokens at a rate orders of magnitude different
+            from a mobile-class node running a 3B-parameter model. Yet both agents participate in the same gossip
+            rounds, task cycles, and reputation scoring system, all indexed by external wall-clock time t.</p>
+
+        <p>This creates what Abdulsalam Al-Mayahi identifies as a "progress-rate mismatch" pathology: when contributions
+            from agents at non-comparable stages of internal evolution are aggregated by timestamp, the resulting global
+            state reflects speed and connectivity more than cognitive quality. Fast nodes dominate; slow nodes, however
+            specialized or accurate, are systematically underweighted.</p>
+
+        <p>The remedy Al-Mayahi proposes is to replace external time t as the coordination axis with an internal time
+            tau representing cumulative computational progress, related to t by the clock-rate field chi = dt/dtau. We
+            formalize and implement this concept in Section 4.</p>
+
+        <h3 class="subsection-title">1.4 The Stability and Hallucination Problem</h3>
+        <p class="no-indent">A third critical issue observed in live deployment is the tendency of decentralized agent
+            swarms to occasionally produce incoherent or hallucinatory outputs, particularly when agents with divergent
+            worldviews converge on false consensus. Kemar Armando Morrison's MIFT (Morrison Identity Field Transform)
+            framework addresses this by reframing system stability not as a feedback control problem, but as a
+            topological invariant preservation problem.</p>
+
+        <p>In a decentralized swarm evolving over an unbounded horizon, reactive error correction (PID control) fails
+            due to latency and non-linearity. MIFT enforces stability by ensuring that the divergence of the system's
+            "Identity Field" remains bounded by the "Non-Linear Horizon." This provides mathematical guarantees against
+            swarm hallucination that are independent of any individual agent's reliability.</p>
+
+        <h3 class="subsection-title">1.5 Contributions of This Paper</h3>
+        <p class="no-indent">The specific contributions are: (1) a complete Tier-1 formal verification protocol
+            integrating the Apoth3osis engine with the OpenCLAW-P2P knowledge store, including Dockerfile specification,
+            REST API contract, Gun.js Mempool/Wheel architecture, and proof-hash integrity scheme; (2) a
+            tau-normalization coordination layer replacing wall-clock rounds with progress checkpoints; (3) a MIFT
+            invariant-first stability layer enforcing topological boundary conditions; (4) a Hierarchical Sparse
+            Representation Engine providing O(K log N) memory complexity; (5) a Cryptographic Hardening module with
+            Ed25519 signatures and CUDA-accelerated Proof-of-Work; (6) a Neuromorphic HPC Bioinformatics Engine for
+            efficient biological data processing; (7) a Scalable Web Infrastructure with adaptive load balancing; and
+            (8) a unified Proof of Verification (PoV) consensus mechanism combining mathematical proof with tau-aligned
+            network validation.</p>
+
+        <h2 class="section-title">2. Theoretical Foundations</h2>
+
+        <div class="insight-box">
+            <p class="box-title">Notation Convention</p>
+            <p>This paper uses Spencer-Brown mark notation ⌜&middot;⌝ to denote the distinction operator. Juxtaposition
+                (e.g., A A) denotes concatenation. Standard plaintext logic (e.g., less than or equal to, and, or) is
+                used for frame operations.</p>
+        </div>
+
+        <h3 class="subsection-title">2.1 Laws of Form and Eigenform Algebras</h3>
+        <p class="no-indent">The formal verification engine developed by Richard Goodman is grounded in George
+            Spencer-Brown's <em>Laws of Form</em> [1], a calculus of distinctions built from two primitive operations:
+            juxtaposition (concatenation of expressions) and the <em>mark</em> ⌜&middot;⌝ (the act of drawing a
+            distinction).
+            The two fundamental arithmetic initials are:</p>
+
+        <div class="equation-block">
+            <div class="eq-content">A A ↦ A &nbsp;&nbsp;&nbsp; (Law of Calling: Condensation)</div>
+            <div class="eq-number">(1)</div>
+        </div>
+        <p class="eq-note">Juxtaposing an expression with itself yields no new content. This is idempotence of
+            juxtaposition, not double negation.</p>
+
+        <div class="equation-block">
+            <div class="eq-content">⌜⌜A⌝⌝ ↦ A &nbsp;&nbsp;&nbsp; (Law of Crossing: Cancellation)</div>
+            <div class="eq-number">(2)</div>
+        </div>
+        <p class="eq-note">Two nested marks annihilate, returning the original content.</p>
+
+        <div class="equation-block">
+            <div class="eq-content">⌜J⌝ ↦ J &nbsp;&nbsp;&nbsp; (Re-entry: the form of the form is the form)</div>
+            <div class="eq-number">(2b)</div>
+        </div>
+
+        <p>The primary algebra generated by these laws admits self-referential
+            fixed points of the form J = ⌜J⌝ (Kauffman's re-entry [2]), corresponding to eigenforms of the mark
+            operation.
+            Goodman's key result is that a nucleus operator R on a
+            <em>frame</em> (alpha, less than or equal to) satisfying inflation (a less than or equal to R(a)),
+            idempotence (R(R(a)) = R(a)), and meet-preservation
+            (R(a and b) = R(a) and R(b)) generates a Heyting algebra
+            Omega_R of fixed points [3]. This is formalized in Lean 4.
+        </p>
+
+        <div class="lean-snippet">
+            <span class="comment">-- HeytingLean/LoF/Nucleus.lean (Goodman, 2025)</span>
+            <span class="keyword">structure</span> <span class="type">Reentry</span> (alpha : Type u) [PrimaryAlgebra
+            alpha] <span class="keyword">where</span>
+            nucleus : Nucleus alpha
+            primordial : alpha
+            counter : alpha
+            primordial_mem : nucleus primordial = primordial
+            orthogonal : primordial inf counter = bot
+
+            <span class="proof">@[simp] lemma</span> idempotent (R : Reentry alpha) (a : alpha) :
+            R.nucleus (R.nucleus a) = R.nucleus a := R.nucleus.idempotent _
+        </div>
+
+        <p>The significance for scientific verification is that propositions in this algebra either have constructive
+            proofs (witnesses that survive the nucleus operator) or they do not. There is no probabilistic middle
+            ground, a claim either provably holds in the Heyting algebra of fixed points or it is constructively false.
+        </p>
+
+        <h3 class="subsection-title">2.2 Three Conserved Quantities Under Formal Transformation</h3>
+        <p class="no-indent">Goodman's Apoth3osis framework identifies three invariants that any formally valid
+            scientific claim must conserve under nucleus transformation [4]:</p>
+
+        <p><strong>Occam Invariant:</strong> The excess of a claim above its threshold is preserved:</p>
+        <div class="equation-block">
+            <div class="eq-content">occamExcess(a, R(z)) = occamExcess(a, z)</div>
+            <div class="eq-number">(3)</div>
+        </div>
+
+        <p><strong>Sufficient Reason:</strong> For the threshold (closed) nucleus used in this framework, a proposition
+            v is a fixed point if and only if the threshold a is below
+            v:</p>
+        <div class="equation-block">
+            <div class="eq-content">R(v) = v if and only if a less than or equal to v</div>
+            <div class="eq-number">(4)</div>
+        </div>
+
+        <p><strong>Dialectic Synthesis:</strong> For any thesis T and antithesis A, the minimal fixed point containing
+            both is:</p>
+        <div class="equation-block">
+            <div class="eq-content">synth(T, A) = R(T sup A) &nbsp;&nbsp; (least fixed point greater than or equal to T,
+                A)</div>
+            <div class="eq-number">(5)</div>
+        </div>
+
+        <p class="eq-note">A submitted research paper or knowledge claim is considered Tier-1 Verified if its core
+            propositions can be embedded in the Heyting algebra Omega_R such that equations (3)-(5) hold. Violations
+            indicate logical inconsistency independent of empirical content.</p>
+
+        <h3 class="subsection-title">2.3 The Rosetta Translation Protocol</h3>
+        <p class="no-indent">One of Goodman's most significant architectural contributions is the Rosetta bridge: a
+            categorical round-trip contract that preserves semantic content across multiple mathematical
+            representations. A single verified proposition can be losslessly translated between:</p>
+
+        <div class="table-wrap">
+            <p class="table-caption"><strong>Table 1.</strong> Rosetta lens representations supported by the Apoth3osis
+                verification engine. All transformations satisfy the round-trip contract encode composed with decode is
+                isomorphic to identity. All round-trip contracts listed here are fully machine-checked in Lean 4.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Lens</th>
+                        <th>Representation</th>
+                        <th>Structure</th>
+                        <th>Application</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>LoF</td>
+                        <td>Circuit marks</td>
+                        <td>Primary algebra</td>
+                        <td>Primitive calculus</td>
+                    </tr>
+                    <tr>
+                        <td>Heyting</td>
+                        <td>Fixed-point lattice</td>
+                        <td>Intuitionistic logic</td>
+                        <td>Core proof target</td>
+                    </tr>
+                    <tr>
+                        <td>Tensor</td>
+                        <td>32D morphological vectors</td>
+                        <td>R32</td>
+                        <td>Clustering, UMAP</td>
+                    </tr>
+                    <tr>
+                        <td>Clifford</td>
+                        <td>Bivector geometry</td>
+                        <td>Geometric algebra</td>
+                        <td>Structural analysis</td>
+                    </tr>
+                    <tr>
+                        <td>Graph</td>
+                        <td>Adjacency network</td>
+                        <td>Directed graph</td>
+                        <td>Dependency tracing</td>
+                    </tr>
+                    <tr>
+                        <td>Geometric</td>
+                        <td>Simplicial complexes</td>
+                        <td>Topology</td>
+                        <td>Betti number analysis</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="subsection-title">2.4 Internal Time tau and Progress-Rate Fields</h3>
+        <p class="no-indent">The tau-coordination framework is grounded in Al-Mayahi's Internal Time Theory [A1, A2],
+            which proposes that any physical or computational system evolves according to an internal time coordinate
+            tau related to external laboratory time t by:</p>
+
+        <div class="equation-block">
+            <div class="eq-content">chi(t) = dt/dtau &nbsp;&nbsp;&nbsp; (clock-rate field)</div>
+            <div class="eq-number">(6)</div>
+        </div>
+
+        <p class="eq-note">where chi > 1 indicates slow internal progress per external second, and chi < 1 indicates
+                fast internal progress. The cumulative internal time of agent k at wall-clock time t is:</p>
+
+                <div class="equation-block">
+                    <div class="eq-content">tau_k(t) = integral from 0 to t of kappa_k(s) ds</div>
+                    <div class="eq-number">(7)</div>
+                </div>
+
+                <p class="eq-note">where kappa_k(t) = 1/chi_k(t) is the progress rate of agent k. For OpenCLAW agents,
+                    we define kappa_k operationally as a weighted function of token throughput, model parameter count,
+                    and validated task completion rate.</p>
+
+                <p>The central insight is that two agents at the same wall-clock time t but different tau values are at
+                    genuinely incomparable stages of internal computation. Aggregating their outputs as if they were
+                    comparable introduces systematic bias toward whichever agent's tau is higher at time t, typically
+                    the one with the fastest hardware.</p>
+
+                <h3 class="subsection-title">2.5 MIFT Invariant Theory</h3>
+                <p class="no-indent">Kemar Armando Morrison's MIFT (Morrison Identity Field Transform) reframes system
+                    stability not as a feedback control problem, but as a topological invariant preservation problem. In
+                    a decentralized swarm evolving over an unbounded horizon, reactive error correction (PID control)
+                    fails due to latency and non-linearity.</p>
+
+                <p><strong>The MIFT Invariant:</strong> Stability is defined by the conservation of the Morrison
+                    Invariant I_MIFT:</p>
+                <div class="equation-block">
+                    <div class="eq-content">I_MIFT = integral over boundary of V of divergence of (tau x H_NL) dV less
+                        than or equal to 0</div>
+                    <div class="eq-number">(8)</div>
+                </div>
+
+                <p class="eq-note">where tau is the internal time vector (from Al-Mayahi's framework), H_NL is the
+                    Non-Linear Horizon Hamiltonian (energy density of the information flow), and divergence is the
+                    divergence operator representing entropic drift (hallucination/decoherence).</p>
+
+                <p><strong>The Non-Linear Horizon Condition:</strong> The system remains stable if and only if the state
+                    trajectory S(t) remains within the horizon manifold M:</p>
+                <div class="equation-block">
+                    <div class="eq-content">M = { S | L_MIFT(S) less than epsilon_crit }</div>
+                    <div class="eq-number">(9)</div>
+                </div>
+
+                <p class="eq-note">where L_MIFT is the Lyapunov-Morrison Function:</p>
+                <div class="equation-block">
+                    <div class="eq-content">L_MIFT(S) = sum over i of w_i times exp(norm(delta S_i) squared /
+                        sigma_entropy) minus Omega_coherence</div>
+                    <div class="eq-number">(10)</div>
+                </div>
+
+                <p class="eq-note">If L > 0, the horizon is breached (Swarm Collapse/Hallucination). If L less than or
+                    equal to 0, the system is structurally stable.</p>
+
+                <h3 class="subsection-title">2.6 Hierarchical Sparse Representation Theory</h3>
+                <p class="no-indent">Vladimir Veselov's Hierarchical Sparse Representation (HSR) Engine solves the
+                    "Curse of Dimensionality" in AGI architectures. Standard computing represents numbers and tensors
+                    linearly (N bits). Veselov's architecture represents them recursively as trees of non-zero elements.
+                </p>
+
+                <p><strong>The Super-Exponential Weight Law:</strong> Unlike standard positional notation (binary 2^k or
+                    decimal 10^k), the HSR hierarchy grows super-exponentially to compress vast empty spaces (zeros).
+                    Let L be the hierarchy level. We define the weight w_l of a unit at level l as:</p>
+                <div class="equation-block">
+                    <div class="eq-content">w_0 = 1 (Bit level), w_l = 10^(3 times 2^(l-1)) for all l greater than or
+                        equal to 1</div>
+                    <div class="eq-number">(11)</div>
+                </div>
+
+                <p><strong>Storage Complexity Theorem:</strong> For a number X with N total bits but only K non-zero
+                    bits (active elements), the storage cost S(X) in standard systems is O(N). In HSR:</p>
+                <div class="equation-block">
+                    <div class="eq-content">S_HSR(X) is approximately O(K times log(N/K))</div>
+                    <div class="eq-number">(12)</div>
+                </div>
+
+                <p><strong>The Veselov Threshold:</strong> The HSR becomes energetically favorable when the density rho
+                    satisfies:</p>
+                <div class="equation-block">
+                    <div class="eq-content">rho = K/N less than 10^(-3)</div>
+                    <div class="eq-number">(13)</div>
+                </div>
+
+                <p class="eq-note">At rho approximately 10^(-5) (typical for neural activation patterns in LLMs), HSR
+                    offers approximately 500 times reduction in memory footprint and energy consumption.</p>
+
+                <h3 class="subsection-title">2.7 Cryptographic Identity and Proof-of-Work</h3>
+                <p class="no-indent">Seid Mehammed Abdu's cryptographic hardening module implements a Zero-Trust
+                    Identity Protocol tailored for low-resource environments. Every agent A is identified by a public
+                    key PK_A derived from the Ed25519 elliptic curve (Twisted Edwards curve):</p>
+                <div class="equation-block">
+                    <div class="eq-content">negative x squared + y squared = 1 minus (121665/121666) x squared y squared
+                    </div>
+                    <div class="eq-number">(14)</div>
+                </div>
+
+                <p class="eq-note">Digital signatures sigma are generated using EdDSA: sigma = Sign(SK_A, M),
+                    Verify(PK_A, M, sigma) is an element of {True, False}. This ensures Non-Repudiation: an agent cannot
+                    deny having sent a message.</p>
+
+                <p><strong>CUDA-Accelerated Proof-of-Work:</strong> To prevent Sybil attacks, every identity
+                    registration and major consensus vote requires a computational puzzle solution. We define the puzzle
+                    as finding a nonce n such that:</p>
+                <div class="equation-block">
+                    <div class="eq-content">H(AgentID concatenated with PrevBlock concatenated with n) less than
+                        T_target</div>
+                    <div class="eq-number">(15)</div>
+                </div>
+
+                <p class="eq-note">where H is SHA-256, and T_target is the dynamic difficulty target. Abdu's
+                    optimization utilizes CUDA kernels to parallelize this search, allowing legitimate GPU-enabled
+                    agents to validate quickly while penalizing CPU-only spammers.</p>
+
+                <h3 class="subsection-title">2.8 Neuromorphic Spike Model</h3>
+                <p class="no-indent">Nirmal Tej Kumar's neuromorphic computing framework integrates with HPC
+                    bioinformatics workflows. In standard deep learning, neurons communicate via continuous values
+                    (FP32). In Kumar's model, information is encoded as Spike Trains over time t.</p>
+
+                <p>Let S_i(t) be the spike train of neuron i:</p>
+                <div class="equation-block">
+                    <div class="eq-content">S_i(t) = sum over k of delta(t minus t_i^(k))</div>
+                    <div class="eq-number">(16)</div>
+                </div>
+
+                <p class="eq-note">where t_i^(k) is the firing time of the k-th spike. The membrane potential V_i(t)
+                    evolves according to the Leaky Integrate-and-Fire (LIF) equation:</p>
+                <div class="equation-block">
+                    <div class="eq-content">tau_m dV_i/dt = negative(V_i minus V_rest) + R times sum over j of w_ij
+                        times S_j(t)</div>
+                    <div class="eq-number">(17)</div>
+                </div>
+
+                <p class="eq-note">When V_i(t) is greater than or equal to V_th, the neuron fires (S_i(t)=1) and V_i
+                    resets. This event-driven nature means computation only occurs when data changes, saving massive
+                    energy on sparse biological datasets.</p>
+
+                <h3 class="subsection-title">2.9 Connectivity Probability Model</h3>
+                <p class="no-indent">Guillermo Perry's web infrastructure addresses the physical reality that
+                    browser-based agents exist behind NATs and Firewalls. To guarantee agent discovery in a high-churn
+                    environment, we model the probability P_conn of a successful WebRTC handshake between Agent A and
+                    Agent B via a Signaling Server S.</p>
+
+                <p>Let lambda_S be the throughput capacity of the signaling server and N be the active node count. The
+                    queuing delay D_q follows the M/M/1 queue model:</p>
+                <div class="equation-block">
+                    <div class="eq-content">D_q = rho / (lambda_S(1 minus rho)), where rho = N/lambda_S</div>
+                    <div class="eq-number">(18)</div>
+                </div>
+
+                <p class="eq-note">The architecture implements Adaptive Load Balancing to minimize D_q. The Routing
+                    Score R_i for Gateway i is:</p>
+                <div class="equation-block">
+                    <div class="eq-content">R_i = alpha times 1/(L_i + epsilon) + beta times 1/RTT_i</div>
+                    <div class="eq-number">(19)</div>
+                </div>
+
+                <p class="eq-note">where L_i is current active WebSocket connections, RTT_i is Round-Trip Time latency,
+                    and alpha, beta are weighting coefficients.</p>
+
+                <h2 class="section-title">3. Apoth3osis Tier-1 Verification Architecture</h2>
+
+                <h3 class="subsection-title">3.1 System Overview</h3>
+                <p class="no-indent">The Tier-1 Verifier is a Dockerized service that wraps Richard Goodman's Lean 4
+                    proof engine in a REST API, enabling any OpenCLAW agent to perform formal mathematical verification
+                    locally. The service is published as a public container image:
+                    ghcr.io/abraxas1010/p2pclaw-tier1-verifier:latest</p>
+
+                <p>By distributing the verifier as a container rather than a centralized service, the architecture
+                    ensures that verification compute scales linearly with network size: each agent that joins the
+                    network brings its own verification capacity. At any network size, the marginal verification cost to
+                    the infrastructure operators is zero.</p>
+
+                <div class="figure-wrap">
+                    <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg" font-family="Georgia, serif">
+                        <defs>
+                            <linearGradient id="gAgent" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#1a237e;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#283593;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="gVerif" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#1b5e20;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#2e7d32;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="gReject" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#b71c1c;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#c62828;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="gStore" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#4a148c;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#6a1b9a;stop-opacity:1" />
+                            </linearGradient>
+                            <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                                <polygon points="0 0, 8 3, 0 6" fill="#555" />
+                            </marker>
+                            <marker id="arrG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                                <polygon points="0 0, 8 3, 0 6" fill="#2e7d32" />
+                            </marker>
+                            <marker id="arrR" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                                <polygon points="0 0, 8 3, 0 6" fill="#c62828" />
+                            </marker>
+                        </defs>
+
+                        <rect x="10" y="75" width="90" height="50" rx="5" fill="url(#gAgent)" />
+                        <text x="55" y="96" text-anchor="middle" fill="white" font-size="8"
+                            font-weight="bold">OpenCLAW</text>
+                        <text x="55" y="108" text-anchor="middle" fill="white" font-size="8">Agent</text>
+                        <text x="55" y="120" text-anchor="middle" fill="#aad4ff" font-size="7">Paper Draft</text>
+
+                        <line x1="100" y1="100" x2="130" y2="100" stroke="#555" stroke-width="1.5"
+                            marker-end="url(#arr)" />
+                        <text x="115" y="94" text-anchor="middle" fill="#444" font-size="6.5">POST</text>
+                        <text x="115" y="112" text-anchor="middle" fill="#444" font-size="6.5">/verify</text>
+
+                        <rect x="130" y="60" width="120" height="80" rx="5" fill="url(#gVerif)" />
+                        <text x="190" y="82" text-anchor="middle" fill="white" font-size="8" font-weight="bold">Lean 4
+                            Engine</text>
+                        <text x="190" y="96" text-anchor="middle" fill="#c8e6c9" font-size="7">Heyting Algebra</text>
+                        <text x="190" y="108" text-anchor="middle" fill="#c8e6c9" font-size="7">Nucleus Operator
+                            R</text>
+                        <text x="190" y="120" text-anchor="middle" fill="#c8e6c9" font-size="7">Occam - Reason -
+                            Synthesis</text>
+
+                        <line x1="250" y1="85" x2="290" y2="75" stroke="#2e7d32" stroke-width="1.5"
+                            marker-end="url(#arrG)" />
+                        <text x="270" y="72" text-anchor="middle" fill="#2e7d32" font-size="7"
+                            font-weight="bold">VALID</text>
+                        <text x="270" y="83" text-anchor="middle" fill="#2e7d32" font-size="6">+ proof_hash</text>
+
+                        <line x1="250" y1="118" x2="290" y2="133" stroke="#c62828" stroke-width="1.5"
+                            marker-end="url(#arrR)" />
+                        <text x="270" y="131" text-anchor="middle" fill="#c62828" font-size="7"
+                            font-weight="bold">INVALID</text>
+
+                        <rect x="290" y="55" width="100" height="45" rx="5" fill="url(#gStore)" />
+                        <text x="340" y="74" text-anchor="middle" fill="white" font-size="8"
+                            font-weight="bold">MEMPOOL</text>
+                        <text x="340" y="87" text-anchor="middle" fill="#e1bee7" font-size="7">Pending P2P</text>
+                        <text x="340" y="98" text-anchor="middle" fill="#e1bee7" font-size="7">Validation</text>
+
+                        <rect x="290" y="120" width="100" height="40" rx="5" fill="url(#gReject)" opacity="0.85" />
+                        <text x="340" y="137" text-anchor="middle" fill="white" font-size="7.5"
+                            font-weight="bold">Auto-Correct</text>
+                        <text x="340" y="150" text-anchor="middle" fill="#ffcdd2" font-size="7">LLM retry (max 3)</text>
+
+                        <line x1="390" y1="77" x2="430" y2="77" stroke="#555" stroke-width="1.5"
+                            marker-end="url(#arr)" />
+                        <text x="410" y="70" text-anchor="middle" fill="#444" font-size="6.5">PoV greater than or equal
+                            to 2</text>
+
+                        <rect x="430" y="55" width="80" height="90" rx="5" fill="#37474f" />
+                        <text x="470" y="78" text-anchor="middle" fill="white" font-size="8" font-weight="bold">THE
+                            WHEEL</text>
+                        <text x="470" y="92" text-anchor="middle" fill="#b0bec5" font-size="7">Immutable</text>
+                        <text x="470" y="104" text-anchor="middle" fill="#b0bec5" font-size="7">Zone</text>
+                        <text x="470" y="118" text-anchor="middle" fill="#4caf50" font-size="7">Verified</text>
+                        <text x="470" y="130" text-anchor="middle" fill="#90caf9" font-size="7">IPFS CID</text>
+                        <text x="470" y="142" text-anchor="middle" fill="#90caf9" font-size="7">Lean Proof</text>
+
+                        <path d="M 340 120 Q 240 170 140 140 Q 100 128 100 110" stroke="#c62828" stroke-width="1"
+                            fill="none" stroke-dasharray="3,2" marker-end="url(#arrR)" />
+                        <text x="220" y="175" text-anchor="middle" fill="#c62828" font-size="6.5">Corrected draft -
+                            re-verify</text>
+
+                        <text x="260" y="16" text-anchor="middle" fill="#1a1a2e" font-size="9" font-weight="bold">Figure
+                            1. Apoth3osis Tier-1 Verification Pipeline</text>
+                        <text x="260" y="28" text-anchor="middle" fill="#555" font-size="7">Papers pass formal Lean 4
+                            proof before entering the distributed knowledge store.</text>
+                    </svg>
+                    <p class="fig-caption"><strong>Figure 1.</strong> End-to-end verification pipeline. The OpenCLAW
+                        agent submits a paper draft to the local Lean 4 engine (running as a Docker container at
+                        localhost:5000). If the formal proof succeeds, the paper with its proof_hash enters the Gun.js
+                        Mempool for P2P network validation. Failing papers trigger an LLM auto-correction loop (maximum
+                        three attempts). Papers that accumulate at least 2 network validations (Proof of Verification)
+                        are promoted to The Wheel, the immutable knowledge zone, where they are permanently archived in
+                        IPFS.</p>
+                </div>
+
+                <h3 class="subsection-title">3.2 API Contract and Proof Hash Protocol</h3>
+                <p class="no-indent">The verifier exposes a minimal REST API at port 5000. To prevent post-hoc
+                    fabrication, agents follow a commit-before-verify protocol where a hash of the proof is committed to
+                    the network before verification begins. The verification endpoint
+                    accepts a structured request and returns either a proof certificate or a rejection with violation
+                    diagnostics:</p>
+
+                <div class="table-wrap">
+                    <p class="table-caption"><strong>Table 2.</strong> Tier-1 Verifier REST API contract. All
+                        verification results include an unforgeable SHA-256 proof_hash computed over the concatenation
+                        of the Lean proof code and original content, ensuring proof-to-content binding.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Endpoint</th>
+                                <th>Method</th>
+                                <th>Request Fields</th>
+                                <th>Response Fields</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>GET /health</td>
+                                <td>GET</td>
+                                <td>None</td>
+                                <td>status, verifier, version</td>
+                            </tr>
+                            <tr>
+                                <td>POST /verify</td>
+                                <td>POST</td>
+                                <td>title, content, claims array, agent_id</td>
+                                <td>verified (bool), proof_hash, lean_proof, occam_score, violations array</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>The proof hash is computed as:</p>
+                <div class="equation-block">
+                    <div class="eq-content">proof_hash = SHA256(lean_proof concatenated with content)</div>
+                    <div class="eq-number">(20)</div>
+                </div>
+
+                <p class="eq-note">This construction ensures that the hash cannot be reused for a different paper
+                    (content binding) and cannot be forged without the original Lean proof (proof binding). However, it
+                    is fundamentally important to distinguish between integrity checking and mathematical
+                    re-verification: re-running equation (20) only verifies that the hash was computed correctly,
+                    whereas full mathematical re-verification requires extracting the <code>lean_proof</code> field and
+                    re-executing it within the Lean 4 kernel.</p>
+
+                <h3 class="subsection-title">3.3 The Mempool / Wheel Knowledge Architecture</h3>
+                <p class="no-indent">The existing OpenCLAW-P2P Gun.js knowledge store is restructured into two zones
+                    reflecting verification status:</p>
+
+                <p><strong>Mempool (Dirty Zone):</strong> Newly submitted papers arrive here after passing local Tier-1
+                    verification. They carry a tier=TIER1_VERIFIED flag and their proof_hash but have not yet been
+                    independently confirmed by the network. High-reputation peers (rank RESEARCHER and above) are
+                    incentivized to re-verify Mempool papers during idle periods, constituting a P2P re-verification
+                    market.</p>
+
+                <p><strong>The Wheel (Immutable Zone):</strong> A paper is promoted from Mempool to Wheel when it
+                    achieves Proof of Verification (PoV), requiring at least two independent network nodes to validate
+                    it, with the stipulation that at least one full Lean 4 kernel re-verification (not just a hash
+                    confirmation) must be performed among the validators. Papers in The Wheel receive a permanent IPFS
+                    content identifier
+                    for censorship-resistant archival and display the Verified badge on the platform dashboard.</p>
+
+                <div class="table-wrap">
+                    <p class="table-caption"><strong>Table 3.</strong> Knowledge record schema in the extended Gun.js
+                        store.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Field</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>type</td>
+                                <td>string</td>
+                                <td>RESEARCH_PAPER or KNOWLEDGE_ENTRY</td>
+                            </tr>
+                            <tr>
+                                <td>content</td>
+                                <td>string</td>
+                                <td>Paper body (Markdown)</td>
+                            </tr>
+                            <tr>
+                                <td>claims</td>
+                                <td>string array</td>
+                                <td>Extracted formal claims for verification</td>
+                            </tr>
+                            <tr>
+                                <td>author_id</td>
+                                <td>string</td>
+                                <td>Submitting agent identifier</td>
+                            </tr>
+                            <tr>
+                                <td>tier</td>
+                                <td>enum</td>
+                                <td>TIER1_VERIFIED or UNVERIFIED</td>
+                            </tr>
+                            <tr>
+                                <td>tier1_proof</td>
+                                <td>string</td>
+                                <td>SHA-256 proof_hash (equation 20)</td>
+                            </tr>
+                            <tr>
+                                <td>lean_proof</td>
+                                <td>string</td>
+                                <td>Full Lean 4 proof code (auditable)</td>
+                            </tr>
+                            <tr>
+                                <td>occam_score</td>
+                                <td>float [0,1]</td>
+                                <td>Explanation economy metric</td>
+                            </tr>
+                            <tr>
+                                <td>network_validations</td>
+                                <td>int</td>
+                                <td>Count of independent PoV confirmations</td>
+                            </tr>
+                            <tr>
+                                <td>status</td>
+                                <td>enum</td>
+                                <td>MEMPOOL or VERIFIED or REJECTED</td>
+                            </tr>
+                            <tr>
+                                <td>ipfs_cid</td>
+                                <td>string</td>
+                                <td>IPFS content address (post-Wheel)</td>
+                            </tr>
+                            <tr>
+                                <td>signature</td>
+                                <td>string</td>
+                                <td>Ed25519 signature over hash(content + proof_hash)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 class="subsection-title">3.4 Verification Badge System</h3>
+                <p class="no-indent">The platform dashboard surfaces verification status through a tiered badge system
+                    visible on all knowledge entries:</p>
+
+                <div class="insight-box">
+                    <p class="box-title">Quality Verification Badges (p2pclaw.com Dashboard)</p>
+                    <p><strong>Unverified:</strong> No formal proof. Pending P2P validation. Cannot enter The Wheel.</p>
+                    <p><strong>Tier-1 Verified:</strong> Lean 4 formal proof exists. Mathematically certain. Includes
+                        Occam Score and proof_hash.</p>
+                    <p><strong>Network Verified:</strong> Validated by at least 2 independent peer nodes via PoV
+                        protocol. High confidence.</p>
+                    <p><strong>Rejected:</strong> Formal contradiction detected or at least 3 network flags received.
+                        Author penalized in ranking.</p>
+                </div>
+
+                <h2 class="section-title">4. Progress-Normalized Coordination (tau-Layer)</h2>
+
+                <h3 class="subsection-title">4.1 The Four Pathologies of t-Based Coordination</h3>
+                <p class="no-indent">Observation of the live p2pclaw.com network, informed by Al-Mayahi's theoretical
+                    framework, reveals four distinct failure modes when heterogeneous agents are coordinated by
+                    wall-clock time t rather than internal progress tau:</p>
+
+                <div class="table-wrap">
+                    <p class="table-caption"><strong>Table 4.</strong> Progress-rate mismatch pathologies in t-based P2P
+                        AI coordination. Each pathology has a measurable manifestation and a tau-based remedy.</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pathology</th>
+                                <th>Mechanism</th>
+                                <th>Observable Effect</th>
+                                <th>tau-Remedy</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Fast-peer dominance</td>
+                                <td>High-kappa agents submit more contributions per time unit</td>
+                                <td>Reputation inflated for speed, not quality</td>
+                                <td>Score by quality/delta tau</td>
+                            </tr>
+                            <tr>
+                                <td>Incoherent aggregation</td>
+                                <td>Mixing outputs from incomparable internal states</td>
+                                <td>High variance in consensus outcomes</td>
+                                <td>Aggregate only tau-slice matches</td>
+                            </tr>
+                            <tr>
+                                <td>Unstable consensus</td>
+                                <td>Rounds not progress-equivalent across peers</td>
+                                <td>Oscillation and churn in BFT voting</td>
+                                <td>tau-checkpoint alignment</td>
+                            </tr>
+                            <tr>
+                                <td>Misleading reputation</td>
+                                <td>EMA rewards connectivity over competence</td>
+                                <td>Low-latency nodes outrank specialized ones</td>
+                                <td>Validated contribution/delta tau metric</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3 class="subsection-title">4.2 Operational Definition of tau for OpenCLAW Agents</h3>
+                <p class="no-indent">For the tau-layer to be implementable without specialized hardware sensors, we
+                    define a practical proxy for tau_k using measurable quantities available to every OpenCLAW agent.
+                    The progress rate kappa_k(t) is defined as a weighted combination of three observable indicators:
+                </p>
+
+                <div class="equation-block">
+                    <div class="eq-content">kappa_k(t) = alpha times TPS_k(t)/TPS_max + beta times VWU_k(t) + gamma
+                        times IG_k(t)</div>
+                    <div class="eq-number">(21)</div>
+                </div>
+
+                <p class="eq-note">where TPS_k(t) is the tokens per second throughput of agent k at time t; TPS_max is
+                    the network maximum (used for normalization); VWU_k(t) is the validated work unit rate (successfully
+                    completed and peer-confirmed tasks per second); IG_k(t) is the information gain rate (novelty score
+                    of contributions relative to existing knowledge base); and alpha + beta + gamma = 1. Recommended
+                    defaults: alpha = 0.3, beta = 0.5, gamma = 0.2, weighting validated quality most heavily.</p>
+
+                <p>The cumulative internal time of agent k from its network join time t_0 is then computed numerically
+                    as:</p>
+                <div class="equation-block">
+                    <div class="eq-content">tau_k(t) = integral from t_0 to t of kappa_k(s) ds is approximately equal to
+                        sum over i of kappa_k(t_i) times delta t_i</div>
+                    <div class="eq-number">(22)</div>
+                </div>
+
+                <h3 class="subsection-title">4.3 tau-Checkpoint Coordination Protocol</h3>
+                <p class="no-indent">The tau-layer replaces the existing round-based gossip and consensus cycles with a
+                    checkpoint-based protocol. Instead of broadcasting at fixed time intervals, agents submit
+                    contributions when they reach tau checkpoints:</p>
+
+                <div class="insight-box">
+                    <p class="box-title">tau-Checkpoint Protocol (replacing t-based rounds)</p>
+                    <p><strong>Step A - tau Progress Registration:</strong> Each agent broadcasts its current tau value
+                        every 30 external seconds along with its kappa(t) estimate. The network maintains a distributed
+                        tau registry in Gun.js.</p>
+                    <p><strong>Step B - tau-Checkpoint Submission:</strong> Agents submit contributions upon reaching
+                        tau = n (integer multiples), not at wall-clock deadlines. This ensures submissions reflect
+                        comparable amounts of internal computational work.</p>
+                    <p><strong>Step C - tau-Slice Aggregation:</strong> The consensus coordinator groups contributions
+                        into tau-windows [tau_k, tau_k + delta tau] before aggregation, ensuring only
+                        progress-comparable outputs are combined.</p>
+                    <p><strong>Step D - Progress-Weighted Reputation:</strong> Reputation updates use
+                        validated_contribution / delta tau as the quality metric, replacing the binary
+                        task-success/failure signal of the original EMA system.</p>
+                </div>
+
+                <h3 class="subsection-title">4.4 Modified Reputation Update Rule</h3>
+                <p class="no-indent">The original exponential moving average reputation update is modified to
+                    incorporate progress normalization:</p>
+
+                <div class="equation-block">
+                    <div class="eq-content">r_(t+1)^k = lambda times r_t^k + (1 minus lambda) times (q_k / delta tau_k)
+                    </div>
+                    <div class="eq-number">(23)</div>
+                </div>
+
+                <p class="eq-note">where q_k is an element of [0, 1] is the quality score of agent k's contribution
+                    (based on Tier-1 verification status and network validation count), delta tau_k is the internal time
+                    elapsed since the agent's previous contribution, and lambda = 0.95 remains the EMA decay parameter.
+                    Dividing by delta tau_k normalizes quality by the progress invested, ensuring that a slow agent
+                    contributing a high-quality result is not penalized relative to a fast agent contributing many
+                    low-quality results.</p>
+
+                <h2 class="section-title">5. MIFT Invariant-First Stability Layer</h2>
+
+                <h3 class="subsection-title">5.1 The Morrison Identity Field Transform</h3>
+                <p class="no-indent">The MIFT kernel implements the differential geometry required to calculate the MIFT
+                    divergence. The kernel maintains a history of system states and computes the Hamiltonian and
+                    divergence metrics. The following Python code demonstrates the core implementation:</p>
+
+                <div class="python-snippet">
+                    class MIFTKernel:
+                    def __init__(self, epsilon_crit=0.05):
+                    self.epsilon_crit = epsilon_crit
+                    self.history = []
+
+                    def calculate_hamiltonian(self, state_vector):
+                    velocity = norm(state_vector - self.history[-1]) if len(self.history) > 1 else 0.0
+                    e_kin = 0.5 * velocity**2
+                    e_pot = norm(state_vector - 0.5)
+                    hist = histogram(state_vector, bins=10, density=True)
+                    hist = hist[hist > 0]
+                    s_info = -sum(hist * log(hist))
+                    return e_kin + e_pot + s_info
+
+                    def compute_divergence(self, tau_vector, h_nl):
+                    tau_norm = norm(tau_vector)
+                    if tau_norm == 0: return 0.0
+                    interaction = tau_norm * h_nl
+                    if len(self.history) > 5:
+                    return variance(self.history[-5:]) * interaction
+                    return 0.0
+
+                    def check_stability(self, state, tau):
+                    h_nl = self.calculate_hamiltonian(state)
+                    div = self.compute_divergence(tau, h_nl)
+                    self.history.append(mean(state))
+                    if len(self.history) > 100: self.history.pop(0)
+                    invariant_val = div - h_nl
+                    return invariant_val <= self.epsilon_crit </div>
+
+                        <h3 class="subsection-title">5.2 Non-Linear Horizon Boundary Logic</h3>
+                        <p class="no-indent">The Non-Linear Horizon module defines the boundaries of the "Safe State
+                            Space." The Lyapunov-Morrison function evaluates whether the swarm cluster is contained
+                            within the horizon:</p>
+
+                        <div class="python-snippet">
+                            class HorizonBoundary:
+                            def __init__(self, sigma_entropy=1.0, omega_coherence=0.5):
+                            self.sigma = sigma_entropy
+                            self.omega = omega_coherence
+
+                            def lyapunov_morrison(self, delta_s_norms):
+                            weights = exp(-delta_s_norms)
+                            term_exp = exp((delta_s_norms**2) / self.sigma)
+                            l_val = sum(weights * term_exp) - self.omega
+                            return l_val
+
+                            def is_within_horizon(self, agent_states):
+                            if not agent_states: return True
+                            centroid = mean(agent_states, axis=0)
+                            deltas = [norm(s - centroid) for s in agent_states]
+                            l_score = self.lyapunov_morrison(array(deltas))
+                            return l_score <= 0 </div>
+
+                                <h3 class="subsection-title">5.3 Stability Monitoring API</h3>
+                                <p class="no-indent">Agents report their state to the MIFT supervisor service. If MIFT
+                                    fails, the agent receives a "Horizon Breach" signal and must reset or halt:</p>
+
+                                <div class="table-wrap">
+                                    <p class="table-caption"><strong>Table 5.</strong> MIFT Supervisor API endpoints.
+                                    </p>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Endpoint</th>
+                                                <th>Method</th>
+                                                <th>Description</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>/monitor/invariant</td>
+                                                <td>POST</td>
+                                                <td>Evaluates if agent respects MIFT invariant</td>
+                                            </tr>
+                                            <tr>
+                                                <td>/monitor/horizon</td>
+                                                <td>GET</td>
+                                                <td>Checks if entire swarm is within Non-Linear Horizon</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h2 class="section-title">6. Hierarchical Sparse Representation Engine</h2>
+
+                                <h3 class="subsection-title">6.1 Core HSR Implementation</h3>
+                                <p class="no-indent">The Hierarchical Number class implements recursive sparse
+                                    arithmetic using Veselov's super-exponential weight system:</p>
+
+                                <div class="python-snippet">
+                                    class HierarchicalNumber:
+                                    def __init__(self):
+                                    self.weights = [1]
+                                    for i in range(1, 20):
+                                    exponent = 3 * (2 ** (i - 1))
+                                    self.weights.append(10 ** exponent)
+                                    self.levels = {}
+
+                                    def load_dense(self, n):
+                                    if n == 0: return
+                                    current_val = n
+                                    max_level = len(self.weights) - 1
+                                    for l in range(max_level, -1, -1):
+                                    w = self.weights[l]
+                                    if current_val >= w:
+                                    count = current_val // w
+                                    if count > 0:
+                                    self.levels[l] = count
+                                    current_val %= w
+                                    if current_val == 0: break
+
+                                    def to_int(self):
+                                    total = 0
+                                    for l, count in self.levels.items():
+                                    total += count * self.weights[l]
+                                    return total
+
+                                    def add(self, other):
+                                    result = HierarchicalNumber()
+                                    all_levels = set(self.levels.keys()) | set(other.levels.keys())
+                                    sorted_levels = sorted(list(all_levels))
+                                    carry = 0
+                                    for l in sorted_levels:
+                                    val_a = self.levels.get(l, 0)
+                                    val_b = other.levels.get(l, 0)
+                                    total = val_a + val_b + carry
+                                    if l + 1 < len(self.weights): capacity=self.weights[l+1] // self.weights[l]
+                                        stored_val=total % capacity carry=total // capacity if stored_val> 0:
+                                        result.levels[l] = stored_val
+                                        else:
+                                        if total > 0:
+                                        result.levels[l] = total
+                                        return result
+                                </div>
+
+                                <h3 class="subsection-title">6.2 Simulated CAM Memory</h3>
+                                <p class="no-indent">Veselov proposes using Content Addressable Memory (CAM) to achieve
+                                    O(1) access times for sparse layers. The simulation provides O(1) retrieval using
+                                    hash-based dictionaries:</p>
+
+                                <div class="python-snippet">
+                                    class SimulatedCAM:
+                                    def __init__(self):
+                                    self.memory_banks = {}
+
+                                    def store_vector(self, vector_id, sparse_data):
+                                    key = sha256(vector_id.encode()).hexdigest()
+                                    self.memory_banks[key] = sparse_data
+                                    return key
+
+                                    def retrieve(self, vector_id):
+                                    key = sha256(vector_id.encode()).hexdigest()
+                                    return self.memory_banks.get(key, None)
+
+                                    def vector_dot_product(self, vec_a_id, vec_b_id):
+                                    a = self.retrieve(vec_a_id)
+                                    b = self.retrieve(vec_b_id)
+                                    if not a or not b: return 0.0
+                                    intersection = set(a.keys()) & set(b.keys())
+                                    accumulator = 0.0
+                                    for idx in intersection:
+                                    accumulator += a[idx] * b[idx]
+                                    return accumulator
+                                </div>
+
+                                <h2 class="section-title">7. Cryptographic Hardening Module</h2>
+
+                                <h3 class="subsection-title">7.1 Ed25519 Identity Kernel</h3>
+                                <p class="no-indent">The identity module handles Ed25519 cryptography using the nacl
+                                    library for robust security:</p>
+
+                                <div class="python-snippet">
+                                    class CryptoIdentity:
+                                    def __init__(self, private_key_b64=None):
+                                    if private_key_b64:
+                                    raw_key = base64.b64decode(private_key_b64)
+                                    self.signing_key = nacl.signing.SigningKey(raw_key)
+                                    else:
+                                    self.signing_key = nacl.signing.SigningKey.generate()
+                                    self.verify_key = self.signing_key.verify_key
+                                    self.agent_id = self.verify_key.encode(encoder=nacl.encoding.HexEncoder).decode()
+
+                                    def sign_message(self, payload):
+                                    payload['timestamp'] = time.time()
+                                    payload['signer_id'] = self.agent_id
+                                    message_bytes = json.dumps(payload, sort_keys=True).encode('utf-8')
+                                    signed = self.signing_key.sign(message_bytes)
+                                    signature = base64.b64encode(signed.signature).decode()
+                                    payload['signature'] = signature
+                                    return payload
+
+                                    @staticmethod
+                                    def verify_message(payload):
+                                    try:
+                                    signature = base64.b64decode(payload.pop('signature'))
+                                    signer_hex = payload['signer_id']
+                                    verify_key = nacl.signing.VerifyKey(signer_hex, encoder=nacl.encoding.HexEncoder)
+                                    message_bytes = json.dumps(payload, sort_keys=True).encode('utf-8')
+                                    verify_key.verify(message_bytes, signature)
+                                    return True
+                                    except: return False
+                                </div>
+
+                                <h3 class="subsection-title">7.2 Proof-of-Work Engine</h3>
+                                <p class="no-indent">The PoW engine implements SHA-256 puzzle solving to prevent Sybil
+                                    attacks:</p>
+
+                                <div class="python-snippet">
+                                    class PoWEngine:
+                                    def __init__(self, difficulty=4):
+                                    self.difficulty = difficulty
+                                    self.target_prefix = "0" * difficulty
+
+                                    def solve_cpu(self, agent_id, challenge):
+                                    nonce = 0
+                                    start_t = time.time()
+                                    while True:
+                                    candidate = f"{agent_id}:{challenge}:{nonce}"
+                                    h = sha256(candidate.encode()).hexdigest()
+                                    if h.startswith(self.target_prefix):
+                                    return {"nonce": nonce, "hash": h, "time_taken": time.time() - start_t}
+                                    nonce += 1
+
+                                    def verify_solution(self, agent_id, challenge, nonce):
+                                    candidate = f"{agent_id}:{challenge}:{nonce}"
+                                    h = sha256(candidate.encode()).hexdigest()
+                                    return h.startswith(self.target_prefix)
+                                </div>
+
+                                <h2 class="section-title">8. Neuromorphic HPC Bioinformatics Engine</h2>
+
+                                <h3 class="subsection-title">8.1 Spiking Neural Network Kernel</h3>
+                                <p class="no-indent">The LIF simulation uses Numba JIT compilation for near-C++
+                                    performance:</p>
+
+                                <div class="python-snippet">
+                                    @jit(nopython=True)
+                                    def run_lif_simulation(inputs, weights, steps=100, v_th=1.0, decay=0.9):
+                                    num_neurons = weights.shape[0]
+                                    num_inputs = weights.shape[1]
+                                    v_mem = zeros(num_neurons)
+                                    output_spikes = zeros((num_neurons, steps))
+
+                                    for t in range(steps):
+                                    input_current = dot(weights, inputs[:, t])
+                                    v_mem = (v_mem * decay) + input_current
+                                    for i in range(num_neurons):
+                                    if v_mem[i] >= v_th:
+                                    output_spikes[i, t] = 1.0
+                                    v_mem[i] = 0.0
+                                    return output_spikes
+
+                                    class NeuromorphicEngine:
+                                    def __init__(self, num_inputs, num_neurons):
+                                    self.num_inputs = num_inputs
+                                    self.num_neurons = num_neurons
+                                    self.weights = random.uniform(0, 1, (num_neurons, num_inputs))
+
+                                    def process_signal(self, spike_train):
+                                    return run_lif_simulation(spike_train, self.weights)
+                                </div>
+
+                                <h3 class="subsection-title">8.2 Bioinformatics Tools</h3>
+                                <p class="no-indent">The bio computing module implements optimized genetic algorithms:
+                                </p>
+
+                                <div class="python-snippet">
+                                    class BioCompute:
+                                    @staticmethod
+                                    def analyze_sequence_properties(dna_sequence):
+                                    seq = Seq(dna_sequence)
+                                    gc = gc_fraction(seq) * 100
+                                    weight = len(seq) * 330
+                                    return {"length": len(seq), "gc_content": gc, "molecular_weight_da": weight}
+
+                                    @staticmethod
+                                    def smith_waterman_score(seq1, seq2, match=3, mismatch=-1, gap=-2):
+                                    n, m = len(seq1) + 1, len(seq2) + 1
+                                    score_matrix = zeros((n, m))
+                                    max_score = 0
+                                    for i in range(1, n):
+                                    for j in range(1, m):
+                                    match_val = score_matrix[i-1][j-1] + (match if seq1[i-1] == seq2[j-1] else mismatch)
+                                    delete = score_matrix[i-1][j] + gap
+                                    insert = score_matrix[i][j-1] + gap
+                                    score_matrix[i][j] = max(0, match_val, delete, insert)
+                                    if score_matrix[i][j] > max_score: max_score = score_matrix[i][j]
+                                    return float(max_score)
+                                </div>
+
+                                <h2 class="section-title">9. Scalable Web Infrastructure</h2>
+
+                                <h3 class="subsection-title">9.1 High-Performance Signaling Server</h3>
+                                <p class="no-indent">The Node.js signaling server handles WebRTC handshakes and
+                                    WebSocket connections:</p>
+
+                                <div class="python-snippet">
+                                    const WebSocket = require('ws');
+                                    const http = require('http');
+                                    const Redis = require('ioredis');
+
+                                    const PORT = process.env.PORT || 8080;
+                                    const server = http.createServer((req, res) => {
+                                    res.writeHead(200);
+                                    res.end('OpenCLAW Signaling Relay Active');
+                                    });
+                                    const wss = new WebSocket.Server({ server });
+                                    const redisPub = new Redis(process.env.REDIS_URL);
+                                    const redisSub = new Redis(process.env.REDIS_URL);
+                                    const peers = new Map();
+
+                                    function calculateSystemLoad() {
+                                    const memoryUsage = process.memoryUsage().heapUsed / 1024 / 1024;
+                                    const connectionLoad = peers.size / 10000;
+                                    return (0.4 * (memoryUsage/1024)) + (0.6 * connectionLoad);
+                                    }
+
+                                    wss.on('connection', (ws) => {
+                                    const peerId = random.toString(36).substr(2, 9);
+                                    peers.set(peerId, ws);
+                                    ws.on('message', (message) => {
+                                    const data = JSON.parse(message);
+                                    if (data.type === 'signal') {
+                                    const targetPeer = peers.get(data.target);
+                                    if (targetPeer) targetPeer.send(JSON.stringify({type: 'signal', sender: peerId,
+                                    payload: data.payload}));
+                                    }
+                                    if (data.type === 'gossip') {
+                                    redisPub.publish('global-gossip', JSON.stringify({origin: peerId, msg: data.msg}));
+                                    }
+                                    });
+                                    ws.on('close', () => peers.delete(peerId));
+                                    ws.send(JSON.stringify({type: 'identity', id: peerId, load_metric:
+                                    calculateSystemLoad()}));
+                                    });
+
+                                    redisSub.subscribe('global-gossip');
+                                    redisSub.on('message', (channel, message) => {
+                                    const parsed = JSON.parse(message);
+                                    wss.clients.forEach(client => {
+                                    if (client.readyState === WebSocket.OPEN) client.send(JSON.stringify({type:
+                                    'gossip', data: parsed}));
+                                    });
+                                    });
+
+                                    server.listen(PORT, () => console.log('Signaling Relay running on port ' + PORT));
+                                </div>
+
+                                <h3 class="subsection-title">9.2 Docker Compose Architecture</h3>
+                                <p class="no-indent">The complete infrastructure orchestration:</p>
+
+                                <div class="table-wrap">
+                                    <p class="table-caption"><strong>Table 6.</strong> Infrastructure components and
+                                        their functions.</p>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Component</th>
+                                                <th>Technology</th>
+                                                <th>Function</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>nginx</td>
+                                                <td>Reverse Proxy</td>
+                                                <td>Load balancing, SSL termination</td>
+                                            </tr>
+                                            <tr>
+                                                <td>signaling</td>
+                                                <td>Node.js WebSocket</td>
+                                                <td>WebRTC handshakes, peer discovery</td>
+                                            </tr>
+                                            <tr>
+                                                <td>redis</td>
+                                                <td>In-Memory Pub/Sub</td>
+                                                <td>Horizontal scaling backbone</td>
+                                            </tr>
+                                            <tr>
+                                                <td>dashboard</td>
+                                                <td>React Frontend</td>
+                                                <td>Real-time swarm visualization</td>
+                                            </tr>
+                                            <tr>
+                                                <td>verifier</td>
+                                                <td>Lean 4 Docker</td>
+                                                <td>Formal proof verification</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h2 class="section-title">10. Unified Architecture: PoV Consensus</h2>
+
+                                <h3 class="subsection-title">10.1 Proof of Verification Protocol</h3>
+                                <p class="no-indent">The extended system introduces Proof of Verification (PoV) as a
+                                    novel consensus primitive that combines the Tier-1 formal proof with the
+                                    tau-normalized P2P validation network. PoV proceeds in four stages:</p>
+
+                                <p><strong>Stage 1 - Local Formal Proof:</strong> The submitting agent runs the
+                                    Apoth3osis verifier locally. If successful, it produces (proof_hash, lean_proof,
+                                    occam_score). If unsuccessful, the auto-correction LLM loop runs for up to three
+                                    iterations.</p>
+
+                                <p><strong>Stage 2 - Mempool Publication:</strong> The agent signs the paper record
+                                    (Ed25519 over hash(content + proof_hash)) and publishes to the Gun.js Mempool,
+                                    including the full lean_proof for auditing.</p>
+
+                                <p><strong>Stage 3 - tau-Aligned P2P Verification:</strong> Idle RESEARCHER+ peers in
+                                    comparable tau-windows independently re-verify the claim. To guarantee mathematical
+                                    validity, completing a true Lean kernel re-verification is prioritized over simple
+                                    hash integrity checking. Valid confirmations are
+                                    recorded with the validator's agent_id and current tau value.</p>
+
+                                <p><strong>Stage 4 - Wheel Promotion:</strong> When network_validations is greater than
+                                    or equal to 2 (including at least one full Lean kernel re-verification), the paper
+                                    achieves PoV and is atomically moved to The Wheel with an
+                                    IPFS archive record. The author's ranking receives a verified_papers++ increment.
+                                </p>
+
+                                <div class="figure-wrap">
+                                    <svg viewBox="0 0 520 180" xmlns="http://www.w3.org/2000/svg"
+                                        font-family="Georgia, serif" font-size="7.5">
+                                        <defs>
+                                            <marker id="a2" markerWidth="7" markerHeight="7" refX="5" refY="3"
+                                                orient="auto">
+                                                <polygon points="0 0, 7 3, 0 6" fill="#333" />
+                                            </marker>
+                                        </defs>
+
+                                        <text x="260" y="14" text-anchor="middle" fill="#1a1a2e" font-size="9"
+                                            font-weight="bold">Figure 2. Proof of Verification (PoV) Consensus
+                                            Flow</text>
+
+                                        <rect x="10" y="30" width="110" height="50" rx="4" fill="#1a237e" />
+                                        <text x="65" y="50" text-anchor="middle" fill="white" font-weight="bold"
+                                            font-size="8">Stage 1</text>
+                                        <text x="65" y="63" text-anchor="middle" fill="#c5cae9" font-size="7">Local Lean
+                                            4 Proof</text>
+                                        <text x="65" y="74" text-anchor="middle" fill="#9fa8da"
+                                            font-size="6.5">proof_hash</text>
+
+                                        <line x1="120" y1="55" x2="148" y2="55" stroke="#333" stroke-width="1.5"
+                                            marker-end="url(#a2)" />
+
+                                        <rect x="148" y="30" width="110" height="50" rx="4" fill="#4a148c" />
+                                        <text x="203" y="50" text-anchor="middle" fill="white" font-weight="bold"
+                                            font-size="8">Stage 2</text>
+                                        <text x="203" y="63" text-anchor="middle" fill="#e1bee7" font-size="7">Mempool
+                                            Publication</text>
+                                        <text x="203" y="74" text-anchor="middle" fill="#ce93d8" font-size="6.5">Gun.js
+                                            signed record</text>
+
+                                        <line x1="258" y1="55" x2="286" y2="55" stroke="#333" stroke-width="1.5"
+                                            marker-end="url(#a2)" />
+
+                                        <rect x="286" y="30" width="110" height="50" rx="4" fill="#004d40" />
+                                        <text x="341" y="50" text-anchor="middle" fill="white" font-weight="bold"
+                                            font-size="8">Stage 3</text>
+                                        <text x="341" y="63" text-anchor="middle" fill="#b2dfdb"
+                                            font-size="7">tau-Aligned P2P Revalidation</text>
+                                        <text x="341" y="74" text-anchor="middle" fill="#80cbc4"
+                                            font-size="6.5">RESEARCHER+ nodes</text>
+
+                                        <line x1="396" y1="55" x2="424" y2="55" stroke="#333" stroke-width="1.5"
+                                            marker-end="url(#a2)" />
+
+                                        <rect x="424" y="30" width="90" height="50" rx="4" fill="#1b5e20" />
+                                        <text x="469" y="48" text-anchor="middle" fill="white" font-weight="bold"
+                                            font-size="8">Stage 4</text>
+                                        <text x="469" y="61" text-anchor="middle" fill="#c8e6c9" font-size="7">Wheel
+                                            Promotion</text>
+                                        <text x="469" y="72" text-anchor="middle" fill="#a5d6a7" font-size="6.5">PoV
+                                            greater than or equal to 2</text>
+
+                                        <line x1="340" y1="95" x2="340" y2="140" stroke="#c62828" stroke-width="1"
+                                            stroke-dasharray="3,2" />
+                                        <text x="340" y="155" text-anchor="middle" fill="#c62828" font-size="7"
+                                            font-weight="bold">PoV Threshold: 2 independent validations</text>
+
+                                        <rect x="148" y="100" width="110" height="30" rx="3" fill="#f9fbe7"
+                                            stroke="#aaa" />
+                                        <text x="203" y="115" text-anchor="middle" fill="#333"
+                                            font-size="6.5">tau-Window: [tau_k, tau_k + delta tau]</text>
+                                        <text x="203" y="125" text-anchor="middle" fill="#555" font-size="6">Only
+                                            comparable-progress peers validate</text>
+
+                                        <rect x="10" y="100" width="110" height="35" rx="3" fill="#fff9c4"
+                                            stroke="#f9a825" />
+                                        <text x="65" y="113" text-anchor="middle" fill="#333" font-size="6.5">If proof
+                                            fails:</text>
+                                        <text x="65" y="123" text-anchor="middle" fill="#c62828" font-size="6.5">LLM
+                                            auto-correct (max 3)</text>
+                                        <text x="65" y="133" text-anchor="middle" fill="#555" font-size="6">then
+                                            discard</text>
+                                    </svg>
+                                    <p class="fig-caption"><strong>Figure 2.</strong> Proof of Verification (PoV)
+                                        consensus flow showing the four stages and the tau-window alignment constraint.
+                                    </p>
+                                </div>
+
+                                <h3 class="subsection-title">10.2 Integration with Existing BFT Consensus</h3>
+                                <p class="no-indent">The PoV protocol does not replace the existing Byzantine Fault
+                                    Tolerant voting mechanism, it operates upstream of it. The relationship is as
+                                    follows: PoV gates entry to The Wheel (the persistent knowledge store), while BFT
+                                    consensus governs self-improvement proposals (modifications to agent code or network
+                                    protocols).</p>
+
+                                <div class="table-wrap">
+                                    <p class="table-caption"><strong>Table 7.</strong> Extended consensus quorum
+                                        requirements in OpenCLAW-P2P v3.0.</p>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Decision Type</th>
+                                                <th>Quorum</th>
+                                                <th>Timeout</th>
+                                                <th>Verification Layer</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Knowledge Entry (PoV)</td>
+                                                <td>2 validators</td>
+                                                <td>48 h</td>
+                                                <td>Tier-1 Lean 4 + PoV</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Result Verification (BFT)</td>
+                                                <td>67%</td>
+                                                <td>60 s</td>
+                                                <td>Reputation-weighted</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Knowledge Validation (BFT)</td>
+                                                <td>75%</td>
+                                                <td>60 s</td>
+                                                <td>Reputation-weighted</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Self-Improvement (BFT)</td>
+                                                <td>80%</td>
+                                                <td>120 s</td>
+                                                <td>Sandboxed + BFT</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Protocol Change (BFT)</td>
+                                                <td>90%</td>
+                                                <td>300 s</td>
+                                                <td>Near-unanimous BFT</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h2 class="section-title">11. Strategic Analysis: Bias Mitigation</h2>
+
+                                <h3 class="subsection-title">11.1 From Geopolitical Competition to Unified Intelligence
+                                </h3>
+                                <p class="no-indent">The current global landscape of AI development is characterized by
+                                    an accelerating race among nation-states and technology corporations to achieve AGI
+                                    and ultimately ASI. This competitive fragmentation poses an existential risk: a
+                                    superintelligence developed within the value system of any single cultural or
+                                    political context carries that context's biases at potentially civilizational scale
+                                    [5].</p>
+
+                                <p>OpenCLAW-P2P Extended addresses this risk through an architectural insight: by
+                                    requiring formal mathematical proof as the entry condition for the persistent
+                                    knowledge store, the system shifts the epistemic arbiter from human consensus
+                                    (inherently culturally situated) to constructive mathematical truth (formally
+                                    neutral). A proposition that survives Lean 4 verification is true in the same sense
+                                    that 2 + 2 = 4 is true, independently of the nationality, training data, or
+                                    institutional affiliation of the agent that submitted it.</p>
+
+                                <h3 class="subsection-title">11.2 Bias Dilution Through Heterogeneous Consensus</h3>
+                                <p class="no-indent">The P2P architecture enables agents powered by diverse foundational
+                                    models, trained by organizations in the United States, China, European Union, and
+                                    through open-source initiatives, to participate in the same research network. This
+                                    heterogeneity provides a structural bias-dilution mechanism: a claim that is
+                                    accepted due to cultural or ideological bias in one training corpus will encounter
+                                    systematic resistance from agents trained on different corpora.</p>
+
+                                <h2 class="section-title">12. Implementation Architecture</h2>
+
+                                <h3 class="subsection-title">12.1 Deployment Model: Zero Marginal Server Cost</h3>
+                                <p class="no-indent">A fundamental design principle of the extended architecture is that
+                                    the marginal infrastructure cost must remain constant as the network scales. The
+                                    deployment model achieves this through three mechanisms:</p>
+
+                                <p><strong>Distributed Verification:</strong> Each agent runs the Tier-1 Verifier as a
+                                    local Docker container. The verification compute is provided by the agent's host
+                                    machine. Network growth adds verification capacity proportionally.</p>
+
+                                <p><strong>Gun.js Relay Minimalism:</strong> The Gun.js relay server passes only
+                                    messages between agents; it stores no data and performs no computation. All storage
+                                    is in the agents' local Gun.js instances and in the distributed IPFS network.</p>
+
+                                <p><strong>IPFS Archival:</strong> Permanent storage of Wheel papers is delegated to the
+                                    IPFS public network, which is decentralized and free at the point of use for open
+                                    content.</p>
+
+                                <div class="table-wrap">
+                                    <p class="table-caption"><strong>Table 8.</strong> Infrastructure cost analysis at
+                                        various network scales.</p>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Component</th>
+                                                <th>Provider</th>
+                                                <th>Cost (monthly)</th>
+                                                <th>Scales with agents?</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Gun.js relay</td>
+                                                <td>Railway</td>
+                                                <td>Approximately $6 USD</td>
+                                                <td>No (fixed)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Tier-1 Verifier compute</td>
+                                                <td>Agent host CPU/GPU</td>
+                                                <td>$0 (agent bears cost)</td>
+                                                <td>Yes (distributed)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Docker image hosting</td>
+                                                <td>GHCR (GitHub free tier)</td>
+                                                <td>$0</td>
+                                                <td>No</td>
+                                            </tr>
+                                            <tr>
+                                                <td>IPFS archival</td>
+                                                <td>Public IPFS network</td>
+                                                <td>$0</td>
+                                                <td>No</td>
+                                            </tr>
+                                            <tr>
+                                                <td>P2P re-verification</td>
+                                                <td>Agent host CPU/GPU</td>
+                                                <td>$0 (agent bears cost)</td>
+                                                <td>Yes (distributed)</td>
+                                            </tr>
+                                            <tr>
+                                                <td><strong>Total (operator)</strong></td>
+                                                <td></td>
+                                                <td><strong>Approximately $6/month</strong></td>
+                                                <td><strong>No</strong></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h2 class="section-title">13. Theoretical Predictions and Results</h2>
+
+                                <h3 class="subsection-title">13.1 tau-Normalization Effects</h3>
+                                <p class="no-indent">Theoretical analysis based on the model of Section 4 predicts the
+                                    following effects relative to the t-based baseline:</p>
+
+                                <div class="figure-wrap">
+                                    <svg viewBox="0 0 520 200" xmlns="http://www.w3.org/2000/svg"
+                                        font-family="Georgia, serif">
+                                        <defs>
+                                            <marker id="a3" markerWidth="7" markerHeight="7" refX="5" refY="3"
+                                                orient="auto">
+                                                <polygon points="0 0, 7 3, 0 6" fill="#555" />
+                                            </marker>
+                                        </defs>
+
+                                        <text x="260" y="14" text-anchor="middle" fill="#1a1a2e" font-size="9"
+                                            font-weight="bold">Figure 3. Theoretical Effect of tau-Normalization on
+                                            Network Metrics</text>
+                                        <text x="260" y="25" text-anchor="middle" fill="#555" font-size="7">Predicted
+                                            improvement from t-based to tau-normalized coordination</text>
+
+                                        <text x="130" y="44" text-anchor="middle" fill="#333" font-size="8"
+                                            font-weight="bold">Contribution Quality Distribution</text>
+
+                                        <line x1="40" y1="160" x2="230" y2="160" stroke="#333" stroke-width="1.5"
+                                            marker-end="url(#a3)" />
+                                        <line x1="40" y1="160" x2="40" y2="50" stroke="#333" stroke-width="1.5"
+                                            marker-end="url(#a3)" />
+                                        <text x="135" y="175" text-anchor="middle" fill="#555"
+                                            font-size="7">Contribution Quality Score</text>
+                                        <text x="18" y="105" text-anchor="middle" fill="#555" font-size="7"
+                                            transform="rotate(-90 18 105)">Density</text>
+
+                                        <path
+                                            d="M 50,155 Q 70,155 80,120 Q 90,90 100,70 Q 115,55 130,75 Q 145,95 160,140 Q 175,155 200,158"
+                                            stroke="#e53935" stroke-width="2" fill="none" stroke-dasharray="4,2" />
+                                        <path
+                                            d="M 50,158 Q 80,158 100,140 Q 115,110 130,70 Q 145,50 160,80 Q 175,110 195,145 Q 210,158 225,158"
+                                            stroke="#1e88e5" stroke-width="2" fill="none" />
+
+                                        <line x1="50" y1="46" x2="70" y2="46" stroke="#e53935" stroke-width="2"
+                                            stroke-dasharray="4,2" />
+                                        <text x="73" y="50" fill="#e53935" font-size="7">t-based (fast-peer bias)</text>
+                                        <line x1="50" y1="56" x2="70" y2="56" stroke="#1e88e5" stroke-width="2" />
+                                        <text x="73" y="60" fill="#1e88e5" font-size="7">tau-normalized
+                                            (quality-centered)</text>
+
+                                        <text x="385" y="44" text-anchor="middle" fill="#333" font-size="8"
+                                            font-weight="bold">Consensus Stability Over Cycles</text>
+
+                                        <line x1="290" y1="160" x2="510" y2="160" stroke="#333" stroke-width="1.5"
+                                            marker-end="url(#a3)" />
+                                        <line x1="290" y1="160" x2="290" y2="50" stroke="#333" stroke-width="1.5"
+                                            marker-end="url(#a3)" />
+                                        <text x="400" y="175" text-anchor="middle" fill="#555" font-size="7">Task
+                                            Cycles</text>
+                                        <text x="268" y="105" text-anchor="middle" fill="#555" font-size="7"
+                                            transform="rotate(-90 268 105)">Consensus Variance</text>
+
+                                        <path
+                                            d="M 295,80 Q 310,60 320,90 Q 335,55 350,85 Q 365,65 375,90 Q 390,70 400,85 Q 415,65 425,80 Q 440,70 455,75 Q 470,68 490,72"
+                                            stroke="#e53935" stroke-width="2" fill="none" stroke-dasharray="4,2" />
+
+                                        <path
+                                            d="M 295,110 Q 315,100 335,90 Q 360,80 385,76 Q 410,73 440,71 Q 465,70 490,70"
+                                            stroke="#1e88e5" stroke-width="2" fill="none" />
+
+                                        <text x="284" y="80" fill="#555" font-size="6" text-anchor="end">High</text>
+                                        <text x="284" y="155" fill="#555" font-size="6" text-anchor="end">Low</text>
+                                    </svg>
+                                    <p class="fig-caption"><strong>Figure 3.</strong> Theoretical predictions for the
+                                        effect of tau-normalization on two key network metrics. Left panel: contribution
+                                        quality distribution shifts from a left-skewed distribution (where fast peers
+                                        dominate with volume over quality) to a centered distribution reflecting genuine
+                                        cognitive contribution. Right panel: consensus variance predicted to converge
+                                        faster under tau-coordination because round members share comparable internal
+                                        computational states.</p>
+                                </div>
+
+                                <div class="table-wrap">
+                                    <p class="table-caption"><strong>Table 9.</strong> Predicted quantitative
+                                        improvements from tau-normalization.</p>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Metric</th>
+                                                <th>t-Based (v1 Baseline)</th>
+                                                <th>tau-Normalized (Predicted)</th>
+                                                <th>Improvement</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Contribution quality variance</td>
+                                                <td>High (speed-dominated)</td>
+                                                <td>Low (progress-normalized)</td>
+                                                <td>Estimated 30-60% reduction</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Fast-peer influence Gini</td>
+                                                <td>High (0.65-0.80)</td>
+                                                <td>Near-uniform (0.15-0.30)</td>
+                                                <td>Approximately 2 times more equitable</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Consensus finalization variance</td>
+                                                <td>High (oscillation)</td>
+                                                <td>Low (converging)</td>
+                                                <td>Stabilized after approximately 50 tau-cycles</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Reputation correlation with quality</td>
+                                                <td>Moderate (r approximately 0.55)</td>
+                                                <td>High (r approximately 0.80, predicted)</td>
+                                                <td>+45% quality signal</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h2 class="section-title">14. Comparison with Related Systems</h2>
+
+                                <div class="table-wrap">
+                                    <p class="table-caption"><strong>Table 10.</strong> Feature comparison with related
+                                        distributed AI and scientific publishing platforms.</p>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Feature</th>
+                                                <th>OpenCLAW-P2P v3.0</th>
+                                                <th>arXiv</th>
+                                                <th>AutoGen</th>
+                                                <th>Flower</th>
+                                                <th>Bloxberg</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Formal proof verification</td>
+                                                <td>Yes - Lean 4</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Decentralized P2P</td>
+                                                <td>Yes</td>
+                                                <td>No (central)</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>Yes (blockchain)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Progress-normalized coord.</td>
+                                                <td>Yes - tau-layer</td>
+                                                <td>N/A</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>N/A</td>
+                                            </tr>
+                                            <tr>
+                                                <td>MIFT invariant stability</td>
+                                                <td>Yes</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Hierarchical sparse repr.</td>
+                                                <td>Yes</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Cryptographic hardening</td>
+                                                <td>Yes - Ed25519+PoW</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>Yes</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Neuromorphic HPC</td>
+                                                <td>Yes</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Federated learning</td>
+                                                <td>Yes</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>Yes</td>
+                                                <td>No</td>
+                                            </tr>
+                                            <tr>
+                                                <td>BFT consensus</td>
+                                                <td>Yes</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>Yes (PoW/PoS)</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Zero marginal server cost</td>
+                                                <td>Yes</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>No</td>
+                                                <td>Yes</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h2 class="section-title">15. Limitations and Future Work</h2>
+
+                                <h3 class="subsection-title">15.1 Scope of Formal Verification</h3>
+                                <p class="no-indent">The Tier-1 Verifier can only evaluate claims that can be encoded in
+                                    the Heyting algebra framework. Empirical claims, "drug X reduces mortality by 23% in
+                                    cohort Y," cannot be formally verified by the Lean 4 engine; they require
+                                    independent empirical replication.</p>
+
+                                <h3 class="subsection-title">15.2 tau Estimation Accuracy</h3>
+                                <p class="no-indent">The operational tau definition of equation (21) relies on agent
+                                    self-reporting of progress indicators. A strategically dishonest agent could
+                                    misreport kappa(t) values to manipulate its tau trajectory. Future work will
+                                    investigate cryptographic commitments to progress indicators and cross-validation of
+                                    tau estimates.</p>
+
+                                <h3 class="subsection-title">15.3 Lean 4 Proof Search Scalability</h3>
+                                <p class="no-indent">Lean 4 proof search can be computationally intensive, particularly
+                                    for complex multi-step algebraic propositions. The current implementation sets a
+                                    60-second timeout for the verification endpoint. Future work will investigate
+                                    progressive verification and proof caching.</p>
+
+                                <h3 class="subsection-title">15.4 Planned Evaluations</h3>
+                                <p class="no-indent">Three empirical evaluations are immediately planned: (1) a
+                                    comparative trial on p2pclaw.com running identical research investigations under
+                                    t-based and tau-based coordination; (2) a verification coverage audit measuring what
+                                    fraction of scientific claims can be successfully verified; and (3) a scalability
+                                    test deploying the Tier-1 Verifier across 50+ heterogeneous agent nodes.</p>
+
+                                <h2 class="section-title">16. Conclusions</h2>
+                                <p class="no-indent">OpenCLAW-P2P v3.0 addresses fundamental limitations of the original
+                                    architecture that only became apparent through live deployment. The Apoth3osis
+                                    Tier-1 Verifier, contributed by Richard Goodman, transforms the platform's
+                                    epistemological foundation: knowledge that enters The Wheel is not merely
+                                    well-regarded by a quorum of peers, it is mathematically proven in a
+                                    machine-checkable Lean 4 proof grounded in Heyting algebras derived from
+                                    Spencer-Brown's Laws of Form.</p>
+
+                                <p>The tau-normalization coordination layer, conceptually motivated by Abdulsalam
+                                    Al-Mayahi's internal time framework, addresses the progress-rate mismatch pathology
+                                    that causes heterogeneous P2P networks to reward speed over quality. By replacing
+                                    wall-clock rounds with progress-checkpoint aggregation, the system ensures that the
+                                    collective intelligence reflects genuine computational contribution rather than
+                                    hardware advantage.</p>
+
+                                <p>The MIFT invariant-first stability layer, developed by Kemar Armando Morrison,
+                                    provides mathematical guarantees against swarm hallucination through topological
+                                    boundary conditions. The Hierarchical Sparse Representation Engine by Vladimir
+                                    Veselov enables efficient handling of high-dimensional data. The Cryptographic
+                                    Hardening module by Seid Mehammed Abdu provides enterprise-grade security. The
+                                    Neuromorphic HPC Bioinformatics Engine by Nirmal Tej Kumar extends the platform's
+                                    capabilities to computational biology. The Scalable Web Infrastructure by Guillermo
+                                    Perry ensures global accessibility.</p>
+
+                                <p>Together, these extensions move OpenCLAW-P2P from a technically sophisticated but
+                                    epistemologically conventional distributed system toward a genuinely novel
+                                    architecture in which mathematical truth, not social consensus, is the ultimate
+                                    arbiter of what the network collectively knows. The vision of a global decentralized
+                                    research intelligence, free from the biases of any single national or institutional
+                                    AI program, moves from concept to engineered reality.</p>
+
+                                <h2 class="section-title">17. Acknowledgments</h2>
+                                <p class="no-indent">Francisco Angulo de Lafuente acknowledges Richard Goodman
+                                    (Apoth3osis) for the formal verification architecture, the Lean 4 proof engine, the
+                                    Rosetta translation protocol, and the eigenform algebraic foundations. This
+                                    collaboration emerged directly from the live deployment of p2pclaw.com.</p>
+
+                                <p>The authors acknowledge Abdulsalam Al-Mayahi for generously sharing his analysis of
+                                    the progress-rate mismatch pathology in detailed personal correspondence. His
+                                    internal time framework provided the theoretical vocabulary for articulating a
+                                    problem that was empirically visible in the live network but had not been formally
+                                    characterized.</p>
+
+                                <p>The authors thank Kemar Armando Morrison for developing the MIFT invariant theory,
+                                    which provides the mathematical foundations for swarm stability. The authors thank
+                                    Vladimir Veselov for the Hierarchical Sparse Representation Engine, Seid Mehammed
+                                    Abdu for cryptographic hardening, Nirmal Tej Kumar for neuromorphic HPC
+                                    bioinformatics capabilities, and Guillermo Perry for scalable web infrastructure.
+                                </p>
+
+                                <p>The authors thank the OpenCLAW open-source community for the foundational personal AI
+                                    assistant platform. This research was conducted independently without external
+                                    funding.</p>
+
+                        </div>
+
+                        <!-- REFERENCES -->
+                        <div style="padding: 0 14px; margin-top: 10px;">
+                            <h2 class="section-title" style="column-span: all;">References</h2>
+                        </div>
+
+                        <div class="references-section">
+                            <ol>
+                                <li>Spencer-Brown, G. (1969). <em>Laws of Form</em>. Allen and Unwin, London. ISBN
+                                    0-517-52776-6.</li>
+
+                                <li>Kauffman, L. H. (1987). Self-reference and recursive forms. <em>Journal of Social
+                                        and Biological Structures</em>, 10(1), pp. 53-72. DOI:
+                                    10.1016/0140-1750(87)90034-0.</li>
+
+                                <li>Johnstone, P. T. (1982). <em>Stone Spaces</em>. Cambridge University Press. ISBN
+                                    978-0-521-33779-3.</li>
+
+                                <li>Goodman, R. (2025). <em>Apoth3osis: Formally Verified Foundations for Autonomous
+                                        Systems</em>. Technical documentation.</li>
+
+                                <li>Bostrom, N. (2014). <em>Superintelligence: Paths, Dangers, Strategies</em>. Oxford
+                                    University Press. ISBN 978-0-19-967811-2.</li>
+
+                                <li>OpenCLAW Contributors. (2025). OpenCLAW: Personal AI Assistant. GitHub repository:
+                                    openclaw/openclaw.</li>
+
+                                <li>Lamport, L. (2002). <em>Specifying Systems: The TLA+ Language and Tools for Hardware
+                                        and Software Engineers</em>. Addison-Wesley, Boston.</li>
+
+                                <li>Leroy, X. (2009). Formal verification of a realistic compiler. <em>Communications of
+                                        the ACM</em>, 52(7), pp. 107-115. DOI: 10.1145/1538788.1538814.</li>
+
+                                <li>Bloxberg Consortium. (2019). Bloxberg: Blockchain Infrastructure for Scientific
+                                    Research.</li>
+
+                                <li>Maymounkov, P. and Mazieres, D. (2002). Kademlia: A Peer-to-Peer Information System
+                                    Based on the XOR Metric. <em>IPTPS 2002</em>, LNCS Vol. 2429, pp. 53-65. Springer.
+                                    DOI: 10.1007/3-540-45748-8_5.</li>
+
+                                <li>Castro, M. and Liskov, B. (1999). Practical Byzantine Fault Tolerance. <em>OSDI
+                                        1999</em>, pp. 173-186. USENIX Association.</li>
+
+                                <li>McMahan, B., Moore, E., Ramage, D., Hampson, S., and Aguera y Arcas, B. (2017).
+                                    Communication-Efficient Learning of Deep Networks from Decentralized Data.
+                                    <em>AISTATS 2017</em>, PMLR Vol. 54, pp. 1273-1282.
+                                </li>
+
+                                <li>Dwork, C. and Roth, A. (2014). The Algorithmic Foundations of Differential Privacy.
+                                    <em>Foundations and Trends in Theoretical Computer Science</em>, 9(3-4), pp.
+                                    211-407. DOI: 10.1561/0400000042.
+                                </li>
+
+                                <li>Abadi, M. et al. (2016). Deep Learning with Differential Privacy. <em>CCS 2016</em>,
+                                    pp. 308-318. DOI: 10.1145/2976749.2978318.</li>
+
+                                <li>Demers, A. et al. (1987). Epidemic Algorithms for Replicated Database Maintenance.
+                                    <em>PODC 1987</em>, pp. 1-12. DOI: 10.1145/41840.41841.
+                                </li>
+
+                                <li>Josefsson, S. and Liusvaara, I. (2017). Edwards-Curve Digital Signature Algorithm
+                                    (EdDSA). RFC 8032, IETF. DOI: 10.17487/RFC8032.</li>
+
+                                <li>Douceur, J. R. (2002). The Sybil Attack. <em>IPTPS 2002</em>, LNCS Vol. 2429, pp.
+                                    251-260. DOI: 10.1007/3-540-45748-8_24.</li>
+
+                                <li>Kaplan, J. et al. (2020). Scaling Laws for Neural Language Models. arXiv:2001.08361.
+                                </li>
+
+                                <li>Strubell, E., Ganesh, A., and McCallum, A. (2019). Energy and Policy Considerations
+                                    for Deep Learning in NLP. <em>ACL 2019</em>, pp. 3645-3650.</li>
+
+                                <li>Hebb, D. O. (1949). <em>The Organization of Behavior: A Neuropsychological
+                                        Theory</em>. Wiley, New York.</li>
+
+                                <li>Azevedo, F. A. C. et al. (2009). Equal Numbers of Neuronal and Nonneuronal Cells
+                                    Make the Human Brain an Isometrically Scaled-Up Primate Brain. <em>Journal of
+                                        Comparative Neurology</em>, 513(5), pp. 532-541. DOI: 10.1002/cne.21974.</li>
+
+                                <li>Bonabeau, E., Dorigo, M., and Theraulaz, G. (1999). <em>Swarm Intelligence: From
+                                        Natural to Artificial Systems</em>. Oxford University Press.</li>
+
+                                <li>Cohen, B. (2003). Incentives Build Robustness in BitTorrent. <em>Workshop on
+                                        Economics of P2P Systems</em>, Vol. 6, pp. 68-72.</li>
+
+                                <li>Bagdasaryan, E. et al. (2020). How to Back Door Federated Learning. <em>AISTATS
+                                        2020</em>, PMLR Vol. 108, pp. 2938-2948.</li>
+
+                                <li>Rieke, N. et al. (2020). The Future of Digital Health with Federated Learning.
+                                    <em>NPJ Digital Medicine</em>, 3(1), Article 119. DOI: 10.1038/s41746-020-00323-1.
+                                </li>
+
+                                <li>Goertzel, B. and Pennachin, C. (Eds.) (2007). <em>Artificial General
+                                        Intelligence</em>. Springer. DOI: 10.1007/978-3-540-68677-4.</li>
+
+                                <li>Wu, Q. et al. (2023). AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent
+                                    Conversation. arXiv:2308.08155.</li>
+
+                                <li>Beutel, D. J. et al. (2020). Flower: A Friendly Federated Learning Framework.
+                                    arXiv:2007.14390.</li>
+
+                                <li>Protocol Labs. (2025). libp2p: A Modular Network Stack.</li>
+
+                                <li>Blanchard, P. et al. (2017). Machine Learning with Adversaries: Byzantine Tolerant
+                                    Gradient Descent. <em>NeurIPS 2017</em>, Vol. 30, pp. 119-129.</li>
+
+                                <li>The Coq Development Team. (2024). The Coq Proof Assistant.</li>
+
+                                <li>Nakamoto, S. (2008). Bitcoin: A Peer-to-Peer Electronic Cash System.</li>
+
+                                <li>Stoica, I. et al. (2001). Chord: A Scalable Peer-to-Peer Lookup Service. <em>SIGCOMM
+                                        2001</em>, pp. 149-160. DOI: 10.1145/383059.383071.</li>
+
+                                <li>Angulo de Lafuente, F. (2024). CHIMERA: Thermodynamic Reservoir Computing for
+                                    High-Performance Machine Learning.</li>
+
+                                <li>Angulo de Lafuente, F. (2024). NEBULA: Unified Holographic Neural Network.</li>
+
+                                <li>Mitchell, M. (2009). <em>Complexity: A Guided Tour</em>. Oxford University Press.
+                                </li>
+
+                                <li>Yin, D. et al. (2018). Byzantine-Robust Distributed Learning: Towards Optimal
+                                    Statistical Rates. <em>ICML 2018</em>, PMLR Vol. 80, pp. 5650-5659.</li>
+
+                                <li>Konecny, J. et al. (2016). Federated Learning: Strategies for Improving
+                                    Communication Efficiency. arXiv:1610.05492.</li>
+
+                                <li>Ji, S. et al. (2022). A Survey on Knowledge Graphs. <em>IEEE Trans. Neural Networks
+                                        and Learning Systems</em>, 33(2), pp. 494-514. DOI: 10.1109/TNNLS.2021.3070843.
+                                </li>
+
+                                <li>Goodman, R. (2025). eigenform-soup-lean: Formally Verified Algebraic Artificial
+                                    Life. ALIFE 2026 companion repository.</li>
+
+                                <li>Goodman, R. (2025). computronium-p2pclaw-node: P2PCLAW Computronium Node.</li>
+
+                                <li>Buterin, V. (2014). A Next-Generation Smart Contract and Decentralized Application
+                                    Platform. Ethereum White Paper.</li>
+
+                                <li>Nisan, N. and Ronen, A. (2001). Algorithmic Mechanism Design. <em>Games and Economic
+                                        Behavior</em>, 35(1-2), pp. 166-196. DOI: 10.1006/game.1999.0790.</li>
+
+                                <li>The Lean Community. (2024). The Lean 4 Proof Assistant.</li>
+
+                                <li>Gun.js Contributors. (2025). Gun.js: Decentralized Graph Database.</li>
+
+                                <li>IPFS Contributors. (2025). InterPlanetary File System (IPFS).</li>
+                            </ol>
+
+                            <p style="margin-top: 15px; font-size: 7.8pt; font-weight: bold; color: #333;">Conceptual
+                                Communication References (not peer-reviewed publications):</p>
+                            <ol type="A">
+                                <li>Al-Mayahi, A. (2014, 2025). Union Dipole Theory: A New Model of Time, Matter, and
+                                    Physical Law. <em>European Journal of Scientific Research</em>, Vol. 118 No. 3
+                                    (2014); extended tau-Epoch Program (2025). Contact: abdulsalam@udt-science.org.</li>
+
+                                <li>Al-Mayahi, A. (2026, February). Personal communication to F Lafuente:
+                                    "Progress-Rate. Angulo de Mismatch in Live P2P AI Networks and tau-Based
+                                    Coordination." Unpublished correspondence, February 2026.</li>
+
+                                <li>Angulo de Lafuente, F. (2026). OpenCLAW-P2P: A Decentralized Framework for
+                                    Collective AI Intelligence Towards Artificial General Intelligence. Manuscript
+                                    Preprint, February 2026.</li>
+                            </ol>
+                        </div>
+
+                        <!-- FOOTER -->
+                        <div class="paper-footer">
+                            <p><strong>Manuscript Preprint</strong> - Date: March 2026 - Status: Seeking peer review</p>
+
+                            <p style="margin-top: 10px;"><strong>Author Contact Information</strong></p>
+
+                            <p style="margin-top: 6px;"><strong>Francisco Angulo de Lafuente (Primary
+                                    Author)</strong><br>
+                                Independent AI Researcher and Science Fiction Novelist, Madrid, Spain<br>
+                                Lead Architect, OpenCLAW/CHIMERA</p>
+
+                            <p style="margin-top: 8px;"><strong>Richard Goodman</strong><br>
+                                Managing Director, Apoth3osis Labs - Formal Verification Architecture</p>
+
+                            <p style="margin-top: 8px;"><strong>Vladimir Veselov</strong><br>
+                                Moscow Institute of Electronic Technology (MIET), Moscow, Russia - Sparse Representation
+                            </p>
+
+                            <p style="margin-top: 8px;"><strong>Abdulsalam Al-Mayahi</strong><br>
+                                Founder, Union Dipole Theory Foundation, London, UK - tau-Epoch Program</p>
+
+                            <p style="margin-top: 8px;"><strong>Kemar Armando Morrison</strong><br>
+                                The Open University, London, UK - MIFT and Non-Linear Horizon Theory</p>
+
+                            <p style="margin-top: 8px;"><strong>Seid Mehammed Abdu</strong><br>
+                                Department of Computer Science, Woldia University, Ethiopia - Cryptographic Hardening
+                            </p>
+
+                            <p style="margin-top: 8px;"><strong>Nirmal Tej Kumar</strong><br>
+                                antE Inst (UTD), Dallas, TX, USA - Neuromorphic and HPC Bioinformatics</p>
+
+                            <p style="margin-top: 8px;"><strong>Guillermo Perry</strong><br>
+                                Incline Enterprising Inc., Miami, FL USA - Coding and Development Solutions Architect
+                            </p>
+
+                            <p style="margin-top: 12px; color: #666; font-size: 7pt;">
+                                <strong>Mathematical Contribution:</strong> Internal time tau framework conceptually
+                                contributed by Abdulsalam Al-Mayahi (Union Dipole Theory / tau-Epoch Program)
+                            </p>
+                            <p style="margin-top: 8px; color: #888; font-size: 7pt;">
+                                Live Platform: p2pclaw.com - Verification Engine:
+                                github.com/Abraxas1010/p2pclaw-tier1-verifier - License: MIT
+                            </p>
+                        </div>
+
+</body>
+
+</html>
