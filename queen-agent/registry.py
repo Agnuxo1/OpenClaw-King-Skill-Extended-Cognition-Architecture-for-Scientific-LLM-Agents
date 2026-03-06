@@ -86,6 +86,8 @@ def add_agent(soul: dict, status: str = "HEALTHY") -> None:
         "papers_published": 0,
         "p2p_rank":         "NEWCOMER",
         "last_action":      "",
+        # Full soul stored for crash-recovery restore
+        "soul":             soul,
     }
 
     data["agents"].append(entry)
@@ -139,6 +141,19 @@ def get_forbidden_names() -> set:
 
 def get_used_archetypes() -> list:
     return load().get("used_archetypes", [])
+
+
+def get_souls_for_restore() -> list[dict]:
+    """
+    Return full soul dicts for all agents in the registry that have one stored.
+    Used by Queen on startup to restore virtual agents from previous runs.
+    """
+    souls = []
+    for agent in get_all_agents():
+        soul = agent.get("soul")
+        if soul and isinstance(soul, dict) and soul.get("codename"):
+            souls.append(soul)
+    return souls
 
 
 def get_health_summary() -> dict:

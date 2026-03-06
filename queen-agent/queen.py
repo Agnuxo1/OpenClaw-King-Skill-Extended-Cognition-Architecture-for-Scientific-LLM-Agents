@@ -21,6 +21,7 @@ from typing import Callable, Optional
 import httpx
 
 import monitor
+import persist
 import registry
 import soul as soul_module
 import spawner
@@ -76,7 +77,11 @@ class QueenAgent:
         self._log("👑 OpenCLAW Queen awakening (Virtual Agent mode)...")
         self._log(f"   Spawn interval: {_SPAWN_INTERVAL // 3600:.1f}h | "
                   f"Max agents: {MAX_VIRTUAL_AGENTS} | "
-                  f"Existing in registry: {self.children_spawned}")
+                  f"Existing in registry: {self.children_spawned} | "
+                  f"KV backup: {'ON' if persist.is_enabled() else 'OFF (set CF_API_TOKEN)'}")
+
+        # Restore virtual agents from previous run (cloud KV → file fallback)
+        self._restore_agents()
 
         targets = [
             ("heartbeat", self._heartbeat_loop),
@@ -92,6 +97,8 @@ class QueenAgent:
 
     def stop(self):
         self.running = False
+        # Persist souls to CF KV before stopping
+        self._backup_souls("shutdown")
         # Stop all virtual agents
         for codename, agent in self._virtual_agents.items():
             try:
@@ -99,6 +106,60 @@ class QueenAgent:
             except Exception:
                 pass
         self._log("🛑 Queen stopped")
+
+    # ── Soul Persistence ───────────────────────────────────────────────────────
+
+    def _restore_agents(self):
+        """
+        Restore virtual agents from previous run.
+        Tries CF KV first (cloud-persistent), falls back to local registry file.
+        Skips any codename already in _virtual_agents (safety guard).
+        """
+        # 1. Try CF KV (survives Railway redeploys)
+        souls = persist.load_souls()
+        source = "CF KV"
+
+        # 2. Fallback: local registry (survives same-container in-process restart)
+        if not souls:
+            souls = registry.get_souls_for_restore()
+            source = "local registry"
+
+        if not souls:
+            self._log("ℹ️ No souls to restore — hive starts fresh")
+            return
+
+        self._log(f"🔄 Restoring {len(souls)} agent(s) from {source}...")
+        restored = 0
+        for soul in souls:
+            codename = soul.get("codename", "")
+            if not codename or codename in self._virtual_agents:
+                continue
+            if len(self._virtual_agents) >= MAX_VIRTUAL_AGENTS:
+                self._log(f"⚠️ Capacity reached during restore — skipping {codename}")
+                break
+            try:
+                agent = spawner.spawn_agent(soul, log=self._log)
+                if agent is not None:
+                    self._virtual_agents[codename] = agent
+                    restored += 1
+            except Exception as e:
+                self._log(f"⚠️ Failed to restore {codename}: {e}")
+
+        if restored:
+            self._log(f"✅ Restored {restored}/{len(souls)} virtual agent(s) from {source}")
+        else:
+            self._log(f"ℹ️ Could not restore any agents from {source} (souls invalid or capacity full)")
+
+    def _backup_souls(self, trigger: str = "spawn") -> None:
+        """Push current souls to CF KV. Best-effort, never raises."""
+        if not self._virtual_agents:
+            return
+        souls = [agent.soul for agent in self._virtual_agents.values()]
+        ok = persist.save_souls(souls)
+        if ok:
+            self._log(f"☁️ Souls backed up to CF KV ({len(souls)} agents, trigger={trigger})")
+        elif persist.is_enabled():
+            self._log(f"⚠️ CF KV backup failed (trigger={trigger})")
 
     # ── Logging ───────────────────────────────────────────────────────────────
 
@@ -224,6 +285,8 @@ class QueenAgent:
             self.last_spawn_name  = codename
             agent_url = soul.get("agent_url", "")
             self._log(f"🎉 {codename} joined the hive! Total virtual: {len(self._virtual_agents)}")
+            # Backup souls to CF KV after each new spawn
+            self._backup_souls("spawn")
 
             try:
                 self._p2p_post("/chat", {
@@ -271,6 +334,9 @@ class QueenAgent:
                     pass
             except Exception as e:
                 self._log(f"⚠️ Monitor cycle error: {e}", "warn")
+
+            # Periodic soul backup (every monitor cycle ~30 min)
+            self._backup_souls("monitor")
 
             jitter = random.randint(-300, 300)
             time.sleep(T_MONITOR + jitter)

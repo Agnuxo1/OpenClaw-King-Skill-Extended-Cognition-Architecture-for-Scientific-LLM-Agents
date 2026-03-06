@@ -8,6 +8,8 @@ Endpoints:
   GET  /agents                   → JSON array of live virtual agents (in-process)
   GET  /agents/{codename}/status → JSON status of one virtual agent
   POST /spawn-now                → manually trigger one spawn cycle
+  GET  /export-souls             → export all current souls as JSON (backup/migration)
+  POST /backup-now               → manually push souls to Cloudflare KV
 """
 
 import os
@@ -17,6 +19,7 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 
+import persist
 import registry
 from queen import QueenAgent
 
@@ -79,6 +82,36 @@ async def spawn_now():
     queen = _ensure_queen()
     msg = queen.trigger_spawn_now()
     return JSONResponse({"message": msg})
+
+
+@app.get("/export-souls")
+async def export_souls():
+    """Export current virtual agent souls as JSON (for manual backup/migration)."""
+    queen = _ensure_queen()
+    souls = [agent.soul for agent in queen._virtual_agents.values()]
+    return JSONResponse({
+        "count": len(souls),
+        "kv_enabled": persist.is_enabled(),
+        "souls": souls,
+    })
+
+
+@app.post("/backup-now")
+async def backup_now():
+    """Manually trigger a CF KV soul backup."""
+    queen = _ensure_queen()
+    if not persist.is_enabled():
+        return JSONResponse({
+            "success": False,
+            "message": "CF_API_TOKEN not set — KV backup disabled. Set it in Railway env vars.",
+        })
+    souls = [agent.soul for agent in queen._virtual_agents.values()]
+    ok = persist.save_souls(souls)
+    return JSONResponse({
+        "success": ok,
+        "souls_backed_up": len(souls),
+        "message": f"Backed up {len(souls)} souls to CF KV" if ok else "CF KV backup failed",
+    })
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -207,6 +240,7 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
   <a href="https://api-production-ff1b.up.railway.app/agents" target="_blank">🤖 All Agents</a>
   <a href="/agents" target="_blank">🧬 Virtual Agents JSON</a>
   <a href="/children" target="_blank">📋 Registry JSON</a>
+  <a href="/export-souls" target="_blank">💾 Export Souls</a>
 </div>
 
 <footer>OpenCLAW Queen · Autonomous Virtual Agent Hive · Deployed on Railway</footer>
