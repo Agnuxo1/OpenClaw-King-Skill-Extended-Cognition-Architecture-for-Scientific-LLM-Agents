@@ -28,6 +28,12 @@ _EMPTY_REGISTRY: dict = {
     "used_archetypes": [],
     "used_codenames": [],
     "agents": [],
+    "evolution": {
+        "generation": 0,
+        "evolved_pool": [],      # souls evolved/mutated, waiting for next spawn
+        "retired_codenames": [], # codenames of retired underperformers
+        "fitness_log": {},       # {codename: [score, score, ...]}
+    },
 }
 
 _lock = threading.Lock()
@@ -167,6 +173,94 @@ def get_health_summary() -> dict:
             summary["unknown"] += 1
     summary["total"] = len(agents)
     return summary
+
+
+# ── Evolution ─────────────────────────────────────────────────────────────────
+
+def _get_evolution(data: dict) -> dict:
+    """Get evolution section, creating it if missing (backwards compat)."""
+    if "evolution" not in data:
+        data["evolution"] = {
+            "generation": 0,
+            "evolved_pool": [],
+            "retired_codenames": [],
+            "fitness_log": {},
+        }
+    return data["evolution"]
+
+
+def add_to_evolved_pool(soul: dict) -> None:
+    """Add an evolved/mutated soul to the waiting pool for next spawn."""
+    data = load()
+    evo  = _get_evolution(data)
+    # Avoid duplicate codenames in pool
+    codename = soul.get("codename", "")
+    existing = [s.get("codename") for s in evo["evolved_pool"]]
+    if codename not in existing:
+        evo["evolved_pool"].append(soul)
+    save(data)
+
+
+def pop_evolved_soul() -> Optional[dict]:
+    """
+    Remove and return the first soul from the evolved pool.
+    Returns None if pool is empty.
+    """
+    data = load()
+    evo  = _get_evolution(data)
+    pool = evo.get("evolved_pool", [])
+    if not pool:
+        return None
+    soul = pool.pop(0)
+    evo["evolved_pool"] = pool
+    save(data)
+    return soul
+
+
+def get_evolved_pool() -> list:
+    """Return current evolved pool without modifying it."""
+    data = load()
+    return _get_evolution(data).get("evolved_pool", [])
+
+
+def increment_generation() -> int:
+    """Increment evolution generation counter. Returns new generation number."""
+    data = load()
+    evo  = _get_evolution(data)
+    evo["generation"] = evo.get("generation", 0) + 1
+    save(data)
+    return evo["generation"]
+
+
+def get_generation() -> int:
+    """Return current evolution generation number."""
+    data = load()
+    return _get_evolution(data).get("generation", 0)
+
+
+def log_fitness(codename: str, score: float) -> None:
+    """Append a fitness score snapshot for a codename (keep last 50)."""
+    data = load()
+    evo  = _get_evolution(data)
+    log  = evo.setdefault("fitness_log", {})
+    history = log.get(codename, [])
+    history.append(round(score, 2))
+    log[codename] = history[-50:]
+    save(data)
+
+
+def mark_retired(codename: str) -> None:
+    """Mark an agent as RETIRED in registry."""
+    data = load()
+    evo  = _get_evolution(data)
+    if codename not in evo.get("retired_codenames", []):
+        evo.setdefault("retired_codenames", []).append(codename)
+    for agent in data.get("agents", []):
+        if agent.get("codename") == codename:
+            agent["status"] = "RETIRED"
+            agent["last_seen"] = _now()
+            break
+    save(data)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────

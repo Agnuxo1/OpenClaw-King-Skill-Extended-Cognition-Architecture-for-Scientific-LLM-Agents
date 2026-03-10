@@ -92,6 +92,10 @@ class VirtualAgent:
         self._validated_ids: set[str] = set()
         self._recent_topics: list[str] = []
 
+        # Evolution tracking
+        self.born_at = time.time()
+        self.fitness_history: list[tuple] = []  # (timestamp, score)
+
         # Own httpx client
         self._http = httpx.Client(
             timeout=_HTTP_TIMEOUT,
@@ -141,6 +145,30 @@ class VirtualAgent:
     def threads_alive(self) -> int:
         return sum(t.is_alive() for t in self._threads)
 
+    def get_fitness_score(self) -> float:
+        """Composite fitness score for evolution selection."""
+        age_hours    = max((time.time() - self.born_at) / 3600, 0.1)
+        papers_rate  = self.papers_published / age_hours
+        rank_bonus   = {
+            "NEWCOMER":           0.0,
+            "JUNIOR_RESEARCHER":  2.0,
+            "RESEARCHER":         5.0,
+            "SENIOR_RESEARCHER": 10.0,
+            "PRINCIPAL":         20.0,
+        }.get(self.rank, 0.0)
+        score = (
+            papers_rate * 10.0          +
+            self.validations_done * 0.8 +
+            self.messages_sent    * 0.2 +
+            self.threads_alive()  * 1.5 +
+            rank_bonus
+        )
+        # Record in history (cap at 100 entries)
+        self.fitness_history.append((time.time(), round(score, 2)))
+        if len(self.fitness_history) > 100:
+            self.fitness_history = self.fitness_history[-100:]
+        return score
+
     def get_status(self) -> dict:
         return {
             "agent_id":         self.agent_id,
@@ -158,6 +186,7 @@ class VirtualAgent:
             "status":           "HEALTHY" if self.is_alive() else "DEAD",
             "agent_url":        self.agent_url,
             "color_scheme":     self.color_scheme,
+            "fitness":          round(self.get_fitness_score(), 2),
         }
 
     # ── Logging ───────────────────────────────────────────────────────────────

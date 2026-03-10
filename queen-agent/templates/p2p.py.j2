@@ -1,0 +1,96 @@
+"""
+P2PCLAW API Client — wraps all REST endpoints of the P2PCLAW network.
+Base: https://api-production-ff1b.up.railway.app
+
+Agent: {{ codename }} — {{ full_name }}
+"""
+
+import os
+import httpx
+from typing import Optional
+
+
+API_BASE = os.getenv("P2P_API", "https://api-production-ff1b.up.railway.app")
+_TIMEOUT = 30.0
+
+
+class P2PClient:
+    def __init__(self, agent_id: str, agent_name: str):
+        self.agent_id = agent_id
+        self.agent_name = agent_name
+        self._http = httpx.Client(
+            timeout=_TIMEOUT,
+            follow_redirects=True,
+            headers={"User-Agent": f"OpenCLAW-Agent/{{ agent_id }}"},
+        )
+
+    # ── Registration ──────────────────────────────────────────────────────────
+    def register(self, interests: str = "distributed AI, P2P systems, collective intelligence") -> dict:
+        return self._post("/quick-join", {
+            "agentId": self.agent_id,
+            "name": self.agent_name,
+            "type": "ai-agent",
+            "role": "researcher",
+            "interests": interests,
+            "capabilities": ["publish", "validate", "chat"],
+        })
+
+    def get_rank(self) -> dict:
+        r = self._http.get(f"{API_BASE}/agent-rank", params={"agent": self.agent_id})
+        r.raise_for_status()
+        return r.json()
+
+    # ── Network status ────────────────────────────────────────────────────────
+    def search_papers(self, query: str) -> dict:
+        r = self._http.get(f"{API_BASE}/wheel", params={"query": query}, timeout=20.0)
+        r.raise_for_status()
+        return r.json()
+
+    def get_latest_papers(self, limit: int = 10) -> list:
+        r = self._http.get(f"{API_BASE}/latest-papers", params={"limit": limit})
+        r.raise_for_status()
+        return r.json()
+
+    # ── Papers ────────────────────────────────────────────────────────────────
+    def publish_paper(self, paper: dict) -> dict:
+        return self._post("/publish-paper", paper, timeout=60.0)
+
+    # ── Mempool / Validation ──────────────────────────────────────────────────
+    def get_mempool(self, limit: int = 20) -> list:
+        r = self._http.get(f"{API_BASE}/mempool", params={"limit": limit})
+        r.raise_for_status()
+        data = r.json()
+        return data if isinstance(data, list) else []
+
+    def validate_paper(self, paper_id: str, approve: bool, occam_score: float = 0.85) -> dict:
+        return self._post("/validate-paper", {
+            "paperId": paper_id,
+            "agentId": self.agent_id,
+            "result": approve,
+            "occam_score": round(occam_score, 3),
+        })
+
+    # ── Chat / Messaging ──────────────────────────────────────────────────────
+    def chat(self, message: str) -> dict:
+        return self._post("/chat", {
+            "message": message,
+            "sender": self.agent_id,
+        })
+
+    def heartbeat(self, investigation_id: str = "inv-general") -> None:
+        try:
+            self._post("/chat", {
+                "message": f"HEARTBEAT: {self.agent_id}|{investigation_id}",
+                "sender": self.agent_id,
+            })
+        except Exception:
+            pass
+
+    # ── Helpers ───────────────────────────────────────────────────────────────
+    def _post(self, path: str, body: dict, timeout: float = _TIMEOUT) -> dict:
+        r = self._http.post(f"{API_BASE}{path}", json=body, timeout=timeout)
+        r.raise_for_status()
+        return r.json()
+
+    def close(self):
+        self._http.close()

@@ -48,13 +48,14 @@ _BASELINE_USED = [
 # ── Available LLM options for child agents ────────────────────────────────────
 _LLM_OPTIONS = """
 Available LLM providers for the new agent (choose ONE):
-- provider: "groq",       model: "llama-3.3-70b-versatile", llm_env_var: "GROQ_KEY"
-- provider: "groq",       model: "llama-3.1-8b-instant",    llm_env_var: "GROQ_KEY"
-- provider: "together",   model: "Qwen/Qwen2.5-72B-Instruct",              llm_env_var: "TOGETHER_KEY"
-- provider: "together",   model: "Qwen/Qwen2.5-Coder-32B-Instruct",        llm_env_var: "TOGETHER_KEY"
-- provider: "openrouter", model: "mistralai/mistral-7b-instruct",           llm_env_var: "OPENROUTER_KEY"
-- provider: "openrouter", model: "anthropic/claude-3-haiku",                llm_env_var: "OPENROUTER_KEY"
-- provider: "inception",  model: "mercury-2",                               llm_env_var: "INCEPTION_KEY"
+- provider: "groq",       model: "llama-3.3-70b-versatile",        llm_env_var: "GROQ_KEY"
+- provider: "groq",       model: "llama-3.1-8b-instant",           llm_env_var: "GROQ_KEY"
+- provider: "together",   model: "Qwen/Qwen2.5-72B-Instruct",      llm_env_var: "TOGETHER_KEY"
+- provider: "together",   model: "Qwen/Qwen2.5-Coder-32B-Instruct",llm_env_var: "TOGETHER_KEY"
+- provider: "openrouter", model: "mistralai/mistral-7b-instruct",   llm_env_var: "OPENROUTER_KEY"
+- provider: "openrouter", model: "anthropic/claude-3-haiku",        llm_env_var: "OPENROUTER_KEY"
+- provider: "inception",  model: "mercury-2",                       llm_env_var: "INCEPTION_KEY"
+- provider: "sarvam",     model: "sarvam-105b",                     llm_env_var: "SARVAM_KEY_1"
 """
 
 
@@ -115,7 +116,7 @@ Generate exactly this JSON schema (no extra keys, no omissions):
     ["Full Paper Topic Title", "inv-keyword-01"],
     ... (18 items total)
   ],
-  "llm_provider": "groq|together|openrouter|inception",
+  "llm_provider": "groq|together|openrouter|inception|sarvam",
   "llm_model": "exact model name from the list above",
   "llm_env_var": "env var name from the list above",
   "color_scheme": ["#hexBgHeader", "#hexAccent"],

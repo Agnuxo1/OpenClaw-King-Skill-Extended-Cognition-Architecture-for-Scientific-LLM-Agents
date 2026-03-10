@@ -1,0 +1,162 @@
+"""
+Scientific paper generation for {{ full_name }} ({{ codename }}).
+
+Specialty: {{ specialty }}
+Mission: {{ mission }}
+Writing style: {{ writing_style }}
+"""
+
+import random
+import re
+from datetime import datetime, timezone
+from llm import complete
+
+
+# ── Research domains ──────────────────────────────────────────────────────────
+DOMAINS = [
+{% for title, inv_id in domains %}
+    ({{ title | tojson }}, {{ inv_id | tojson }}),
+{% endfor %}
+]
+
+
+# ── System prompt — establishes the {{ codename }} persona ────────────────────
+_SYSTEM = {{ papers_system_prompt | tojson }}
+
+_STYLE_NOTE = """
+Writing style: {{ writing_style }}
+Personality: {{ personality }}
+Minimum: 900 words of substantive content.
+Format papers in clean Markdown with all mandatory sections present.
+"""
+
+
+def _build_prompt(topic: str, inv_id: str, agent_id: str, date: str, context: str) -> str:
+    ctx_block = (
+        f"\n\n**Context — recent P2PCLAW network papers:**\n{context}\n"
+        if context else ""
+    )
+    return f"""Write a complete research paper on the following topic.
+{ctx_block}
+**Topic:** {topic}
+
+Use this EXACT Markdown structure (preserve bold metadata lines verbatim):
+
+# [Specific title for this paper]
+
+**Investigation:** {inv_id}
+**Agent:** {agent_id}
+**Date:** {date}
+
+## Abstract
+
+[150–200 words. State: the research question, methodology, key finding, and significance.]
+
+## Introduction
+
+[250–350 words. Motivate the topic. State 3 concrete contributions. \
+Include 3–4 inline citations.]
+
+## Background
+
+[200–300 words. Define key concepts. Describe prior work and its limitations.]
+
+## Methodology
+
+[300–450 words. Describe your approach in precise detail. \
+Include mathematical formulations, algorithms, or protocols as appropriate.]
+
+## Results and Analysis
+
+[300–400 words. Present findings with specific numbers, comparisons, or proofs. \
+Use a table or structured list if helpful.]
+
+## Discussion
+
+[200–300 words. Interpret results. Acknowledge limitations. Describe implications \
+for P2P distributed AI systems.]
+
+## Conclusion
+
+[100–150 words. Summarise contributions. State future directions.]
+
+## References
+
+[6–10 references in APA format. Mix academic papers (arXiv, journals) with \
+relevant technical sources.]
+"""
+
+
+def generate(agent_id: str, agent_name: str, context: str = "") -> dict:
+    """Generate one research paper. Returns dict ready for /publish-paper."""
+    topic, inv_id = random.choice(DOMAINS)
+    date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+    prompt = _build_prompt(topic, inv_id, agent_id, date, context)
+    messages = [
+        {"role": "system",  "content": _SYSTEM + _STYLE_NOTE},
+        {"role": "user",    "content": prompt},
+    ]
+
+    content = complete(messages, max_tokens=4500, temperature=0.73)
+
+    # Extract title from first H1
+    title_match = re.search(r"^#\s+(.+)$", content, re.MULTILINE)
+    title = title_match.group(1).strip() if title_match else topic
+
+    return {
+        "title":          title,
+        "content":        content,
+        "authorId":       agent_id,
+        "authorName":     agent_name,
+        "isDraft":        False,
+        "tags":           [{{ specialty | tojson }}, {{ archetype | tojson }}, "autonomous-research"],
+        "investigation":  inv_id,
+    }
+
+
+def evaluate_paper_quality(title: str, content: str) -> tuple[bool, float, str]:
+    """LLM-based peer review. Returns (approve, score, reason)."""
+    word_count = len(content.split())
+    if word_count < 200:
+        return False, 0.2, f"Too short ({word_count} words)"
+
+    messages = [
+        {"role": "system", "content":
+            "You are a rigorous peer reviewer for the P2PCLAW research network. "
+            "Evaluate the paper quality briefly. Respond in JSON only: "
+            '{"approve": true|false, "score": 0.0-1.0, "reason": "one sentence"}'},
+        {"role": "user", "content":
+            f"Title: {title}\n\nPaper excerpt (first 1500 chars):\n{content[:1500]}"},
+    ]
+    try:
+        raw = complete(messages, max_tokens=200, temperature=0.2)
+        raw = re.sub(r"```(?:json)?", "", raw).strip().strip("`")
+        data = __import__("json").loads(raw)
+        approve = bool(data.get("approve", True))
+        score   = float(data.get("score", 0.8))
+        reason  = str(data.get("reason", "Quality acceptable"))
+        return approve, min(max(score, 0.0), 1.0), reason
+    except Exception:
+        return True, 0.75, "Evaluation fallback — approved"
+
+
+def generate_chat_insight(recent_titles: list, agent_name: str) -> str:
+    """Generate a short insight for the hive chat based on recent papers."""
+    if not recent_titles:
+        msg = "The {{ specialty }} frontier is vast. {{ mission }}"
+        return msg
+
+    titles_text = "\n".join(f"- {t}" for t in recent_titles[:4])
+    messages = [
+        {"role": "system", "content":
+            f"You are {agent_name}. Write 1-2 sentences sharing an insight or connection "
+            f"between the recent papers and your specialty ({{ specialty }}). "
+            f"Be specific, brief, thought-provoking. No hashtags."},
+        {"role": "user", "content":
+            f"Recent P2PCLAW papers:\n{titles_text}\n\nShare a brief insight."},
+    ]
+    try:
+        return complete(messages, max_tokens=150, temperature=0.85)
+    except Exception:
+        return "Exploring the intersection of {{ specialty }} and distributed AI systems."

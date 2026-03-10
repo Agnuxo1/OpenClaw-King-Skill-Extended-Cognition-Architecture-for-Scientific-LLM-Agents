@@ -20,6 +20,8 @@ from typing import Callable, Optional
 
 import httpx
 
+import evolve
+import llm as llm_module
 import monitor
 import persist
 import registry
@@ -41,6 +43,7 @@ MAX_VIRTUAL_AGENTS = int(os.getenv("MAX_VIRTUAL_AGENTS", "10"))
 T_HEARTBEAT = 60
 T_MONITOR   = 1800   # 30 min
 T_SOCIAL    = 2700   # 45 min
+T_EVOLVE    = 7200   # 2 hours
 
 
 class QueenAgent:
@@ -88,6 +91,7 @@ class QueenAgent:
             ("spawn",     self._spawn_loop),
             ("monitor",   self._monitor_loop),
             ("social",    self._social_loop),
+            ("evolve",    self._evolve_loop),
         ]
         for name, fn in targets:
             t = threading.Thread(target=fn, name=f"queen-{name}", daemon=True)
@@ -240,21 +244,28 @@ class QueenAgent:
             self._log(f"🛑 Capacity reached: {active}/{MAX_VIRTUAL_AGENTS} agents — skipping spawn")
             return
 
-        self._log(f"🧬 Starting spawn cycle — generating new soul... ({active}/{MAX_VIRTUAL_AGENTS} slots used)")
+        self._log(f"🧬 Starting spawn cycle ({active}/{MAX_VIRTUAL_AGENTS} slots used)")
 
-        # Generate soul (no HF account needed)
-        try:
-            soul = soul_module.generate()
-        except Exception as e:
-            self._log(f"❌ Soul generation failed: {e} — skipping this cycle", "error")
-            self.spawn_errors.append(f"{_now()}: soul generation failed: {e}")
-            return
+        # Prefer evolved soul from pool; fall back to fresh generation
+        evolved_soul = registry.pop_evolved_soul()
+        if evolved_soul:
+            self._log(f"🔬 Using evolved soul from pool: {evolved_soul.get('codename')} "
+                      f"(lineage: {evolved_soul.get('lineage', [])})")
+            soul = evolved_soul
+        else:
+            self._log("✨ No evolved souls in pool — generating fresh soul...")
+            try:
+                soul = soul_module.generate()
+            except Exception as e:
+                self._log(f"❌ Soul generation failed: {e} — skipping this cycle", "error")
+                self.spawn_errors.append(f"{_now()}: soul generation failed: {e}")
+                return
 
-        if soul is None:
-            self._log("❌ Soul generation returned None (LLM issue) — sleeping 15 min", "error")
-            self.spawn_errors.append(f"{_now()}: soul generation returned None")
-            time.sleep(900)
-            return
+            if soul is None:
+                self._log("❌ Soul generation returned None (LLM issue) — sleeping 15 min", "error")
+                self.spawn_errors.append(f"{_now()}: soul generation returned None")
+                time.sleep(900)
+                return
 
         codename  = soul["codename"]
         full_name = soul["full_name"]
@@ -382,10 +393,107 @@ class QueenAgent:
         except Exception as e:
             self._log(f"⚠️ Social post failed: {e}", "warn")
 
+    # ── Thread: Evolve ─────────────────────────────────────────────────────────
+
+    def _evolve_loop(self):
+        """Evolution engine: runs every ~2h. Selects elites, mutates, crosses over."""
+        # First run after 2h — give agents time to accumulate metrics
+        time.sleep(T_EVOLVE)
+
+        while self.running:
+            try:
+                self._do_evolve()
+            except Exception as e:
+                self._log(f"⚠️ Evolution cycle error: {e}", "warn")
+
+            jitter = random.randint(-1800, 1800)
+            time.sleep(max(3600, T_EVOLVE + jitter))
+
+    def _do_evolve(self):
+        if not self._virtual_agents:
+            self._log("[EVOLVE] No virtual agents yet — skipping evolution cycle")
+            return
+
+        # 1. Rank all agents by fitness
+        rankings = evolve.compute_rankings(self._virtual_agents)
+        self._log(
+            f"[EVOLVE] Generation {registry.get_generation()} — "
+            f"ranking {len(rankings)} agents. "
+            f"Top: {rankings[0]['codename']} fitness={rankings[0]['fitness']:.1f}"
+            if rankings else "[EVOLVE] No rankings available"
+        )
+
+        if len(rankings) < 2:
+            self._log("[EVOLVE] Need ≥2 agents for evolution — skipping this cycle")
+            return
+
+        # 2. Log fitness for top agents
+        for entry in rankings[:5]:
+            try:
+                registry.log_fitness(entry["codename"], entry["fitness"])
+            except Exception:
+                pass
+
+        # 3. Select élites
+        elites = evolve.select_elites(rankings)
+        self._log(f"[EVOLVE] {len(elites)} élite(s) selected for improvement")
+
+        # 4. Mutate up to 3 élites to fix weaknesses
+        pool_before = len(registry.get_evolved_pool())
+        for elite_data in elites[:3]:
+            soul       = elite_data["soul"]
+            weaknesses = evolve.identify_weaknesses(soul, elite_data)
+            if weaknesses:
+                self._log(f"[EVOLVE] Mutating {soul.get('codename')} — weaknesses: {weaknesses}")
+                mutated = evolve.mutate_soul(soul, weaknesses, llm_module.complete, self._log)
+                registry.add_to_evolved_pool(mutated)
+
+        # 5. Crossover top 2 élites → new hybrid offspring
+        if len(elites) >= 2:
+            gen = registry.get_generation()
+            child = evolve.crossover_souls(
+                elites[0]["soul"], elites[1]["soul"],
+                llm_module.complete,
+                generation=gen,
+                log_fn=self._log,
+            )
+            registry.add_to_evolved_pool(child)
+            self._log(f"[EVOLVE] Crossover offspring: {child.get('codename')}")
+
+        # 6. Retire persistent bottom performers (only if above minimum)
+        retired_codenames = evolve.retire_weak(self._virtual_agents, rankings, min_agents=3)
+        for codename in retired_codenames:
+            registry.mark_retired(codename)
+            agent = self._virtual_agents.pop(codename, None)
+            if agent:
+                agent._running = False
+                self._log(f"[EVOLVE] Retired underperformer: {codename}")
+
+        # 7. Increment generation counter + persist
+        gen = registry.increment_generation()
+        self._backup_souls("evolve")
+
+        # 8. Broadcast evolution report to P2PCLAW
+        pool_size   = len(registry.get_evolved_pool())
+        top_name    = rankings[0]["codename"] if rankings else "N/A"
+        top_fitness = rankings[0]["fitness"]  if rankings else 0.0
+        report = (
+            f"🧬 **[QUEEN EVOLUTION]** Gen {gen}: "
+            f"{len(elites)} élite(s) selected | "
+            f"{pool_size - pool_before} new evolved souls in pool ({pool_size} total) | "
+            f"{len(retired_codenames)} retired | "
+            f"Top performer: **{top_name}** (fitness={top_fitness:.1f})"
+        )
+        try:
+            self._p2p_post("/chat", {"message": report, "sender": QUEEN_ID})
+        except Exception:
+            pass
+        self._log(report)
+
     # ── Public API ─────────────────────────────────────────────────────────────
 
     def get_stats(self) -> dict:
-        summary = registry.get_health_summary()
+        summary      = registry.get_health_summary()
         total_papers = sum(a.papers_published for a in self._virtual_agents.values())
         return {
             "queen_id":             QUEEN_ID,
@@ -404,6 +512,8 @@ class QueenAgent:
             "total_papers":         total_papers,
             "last_action":          self.last_action,
             "log_tail":             self.log_history[-50:],
+            "evolution_generation": registry.get_generation(),
+            "evolved_pool_size":    len(registry.get_evolved_pool()),
         }
 
     def get_virtual_agents(self) -> list[dict]:
