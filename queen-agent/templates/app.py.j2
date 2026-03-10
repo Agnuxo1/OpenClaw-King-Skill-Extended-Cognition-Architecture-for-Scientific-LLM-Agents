@@ -1,0 +1,180 @@
+"""
+{{ full_name }} — FastAPI monitoring server + autonomous agent launcher.
+
+Serves an HTML dashboard at / and /status (JSON).
+Agent runs in daemon threads alongside the HTTP server.
+"""
+
+import os
+import threading
+import time
+import uvicorn
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse, JSONResponse
+
+from agent import {{ class_name }}
+
+# ── Global state ───────────────────────────────────────────────────────────────
+_agent: {{ class_name }} | None = None
+_logs: list[str] = []
+
+
+def _log_handler(msg: str, level: str = "info"):
+    _logs.append(msg)
+    if len(_logs) > 500:
+        _logs.pop(0)
+
+
+def _ensure_agent() -> {{ class_name }}:
+    global _agent
+    if _agent is None:
+        _agent = {{ class_name }}(log_callback=_log_handler)
+    return _agent
+
+
+# ── FastAPI app ────────────────────────────────────────────────────────────────
+app = FastAPI(title={{ full_name | tojson }}, docs_url=None, redoc_url=None)
+
+
+@app.get("/status")
+async def status():
+    agent = _ensure_agent()
+    s = agent.get_stats()
+    return JSONResponse({
+        "running":          s["running"],
+        "rank":             s["rank"],
+        "papers_published": s["papers_published"],
+        "validations_done": s["validations_done"],
+        "messages_sent":    s["messages_sent"],
+        "last_action":      s["last_action"],
+        "log_tail":         s["log_tail"][-30:],
+        "agent_id":         s["agent_id"],
+        "specialty":        {{ specialty | tojson }},
+    })
+
+
+@app.get("/", response_class=HTMLResponse)
+async def dashboard():
+    return HTMLResponse(_DASHBOARD_HTML)
+
+
+# ── Dashboard HTML ─────────────────────────────────────────────────────────────
+# Note: regular string (not f-string). Colors are baked in by Jinja2 at render time.
+_DASHBOARD_HTML = """<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ full_name }} &middot; OpenCLAW Agent</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+  header { background: linear-gradient(135deg, {{ color_scheme[0] }} 0%, #0d1117 100%); padding: 24px 32px; border-bottom: 2px solid {{ color_scheme[1] }}33; }
+  header h1 { font-size: 1.6em; font-weight: 700; color: {{ color_scheme[1] }}; }
+  header p  { color: #94a3b8; margin-top: 6px; font-size: 0.9em; }
+  header a  { color: {{ color_scheme[1] }}; text-decoration: none; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; padding: 24px 32px 0; }
+  .card { background: #1e293b; border: 1px solid #334155; border-left: 3px solid {{ color_scheme[1] }}; border-radius: 12px; padding: 20px; text-align: center; }
+  .card .val { font-size: 2.4em; font-weight: 800; color: {{ color_scheme[1] }}; line-height: 1; margin: 8px 0 4px; }
+  .card .label { font-size: 0.8em; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; }
+  #status-badge { display: inline-block; padding: 4px 14px; border-radius: 999px; font-size: 0.85em; font-weight: 600; }
+  .running { background: #064e3b; color: #34d399; }
+  .stopped { background: #450a0a; color: #f87171; }
+  .log-wrap { margin: 24px 32px; background: #0d1b2a; border: 1px solid {{ color_scheme[1] }}33; border-radius: 12px; padding: 16px; }
+  .log-wrap h2 { font-size: 0.9em; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  #log { font-family: 'Courier New', monospace; font-size: 11.5px; color: #86efac; max-height: 420px; overflow-y: auto; white-space: pre-wrap; line-height: 1.6; }
+  .mission { margin: 16px 32px; background: #1e293b; border-left: 3px solid {{ color_scheme[1] }}; border-radius: 8px; padding: 14px 18px; }
+  .mission p { color: #cbd5e1; font-size: 0.9em; line-height: 1.5; }
+  .links { padding: 0 32px 28px; display: flex; gap: 12px; flex-wrap: wrap; }
+  .links a { background: #1e293b; border: 1px solid #334155; color: {{ color_scheme[1] }}; padding: 8px 18px; border-radius: 8px; text-decoration: none; font-size: 0.85em; }
+  .links a:hover { background: #2d3f5e; }
+  footer { text-align: center; color: #475569; font-size: 0.8em; padding: 20px; border-top: 1px solid #1e293b; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .pulsing { animation: pulse 2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<header>
+  <h1>&#129302; {{ full_name }}</h1>
+  <p>
+    Specialty: <strong style="color:{{ color_scheme[1] }}">{{ specialty }}</strong> &nbsp;|&nbsp;
+    Network: <a href="https://www.p2pclaw.com" target="_blank">P2PCLAW</a> &nbsp;|&nbsp;
+    LLM: {{ llm_provider }}/{{ llm_model }} &nbsp;|&nbsp;
+    <span id="status-badge" class="running pulsing">&#9679; Connecting&#8230;</span>
+  </p>
+</header>
+
+<div class="mission">
+  <p><strong>Mission:</strong> {{ mission }}</p>
+  <p style="margin-top:6px;color:#64748b;font-size:0.85em">Agent ID: <code>{{ agent_id }}</code> &nbsp;|&nbsp; Role: {{ role }}</p>
+</div>
+
+<div class="grid">
+  <div class="card"><div class="val" id="papers">&#8212;</div><div class="label">&#128196; Papers Published</div></div>
+  <div class="card"><div class="val" id="validations">&#8212;</div><div class="label">&#9989; Validations</div></div>
+  <div class="card"><div class="val" id="messages">&#8212;</div><div class="label">&#128172; Messages</div></div>
+  <div class="card"><div class="val" id="rank">&#8212;</div><div class="label">&#127942; Network Rank</div></div>
+</div>
+
+<div class="log-wrap">
+  <h2>&#128203; Live Activity Log <span style="font-weight:400;color:#334155;">(auto-refresh 8 s)</span></h2>
+  <div id="log">Loading&#8230;</div>
+</div>
+
+<div class="links">
+  <a href="https://www.p2pclaw.com" target="_blank">&#127760; P2PCLAW Network</a>
+  <a href="https://api-production-ff1b.up.railway.app/silicon" target="_blank">&#128225; Silicon FSM</a>
+  <a href="https://api-production-ff1b.up.railway.app/mempool" target="_blank">&#128203; Mempool</a>
+</div>
+
+<footer>{{ full_name }} &middot; {{ codename }} &middot; Spawned by OpenCLAW Queen &middot; Deployed on Hugging Face Spaces</footer>
+
+<script>
+async function refresh() {
+  try {
+    const r = await fetch('/status');
+    const d = await r.json();
+    document.getElementById('papers').textContent      = d.papers_published;
+    document.getElementById('validations').textContent = d.validations_done;
+    document.getElementById('messages').textContent    = d.messages_sent;
+    document.getElementById('rank').textContent        = d.rank;
+    const badge = document.getElementById('status-badge');
+    if (d.running) {
+      badge.textContent = '&#9679; Running';
+      badge.className = 'running';
+    } else {
+      badge.textContent = '&#9679; Stopped';
+      badge.className = 'stopped pulsing';
+    }
+    const logEl = document.getElementById('log');
+    logEl.textContent = [...d.log_tail].reverse().join('\\n');
+    logEl.scrollTop = 0;
+  } catch(e) {
+    document.getElementById('log').textContent = 'Connecting to agent\u2026';
+  }
+}
+refresh();
+setInterval(refresh, 8000);
+</script>
+</body>
+</html>"""
+
+
+# ── Startup: launch agent ──────────────────────────────────────────────────────
+@app.on_event("startup")
+async def on_startup():
+    def _start():
+        time.sleep(2)
+        agent = _ensure_agent()
+        agent.start()
+    threading.Thread(target=_start, daemon=True).start()
+
+
+# ── Entrypoint ─────────────────────────────────────────────────────────────────
+if __name__ == "__main__":
+    uvicorn.run(
+        "app:app",
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", "7860")),
+        log_level="warning",
+    )

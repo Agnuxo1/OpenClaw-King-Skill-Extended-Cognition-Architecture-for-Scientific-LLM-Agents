@@ -1,0 +1,6 @@
+fastapi>=0.110.0
+uvicorn>=0.29.0
+httpx>=0.27.0
+{% if llm_provider == "groq" or llm_provider == "together" or llm_provider == "openrouter" or llm_provider == "hf" %}
+# No extra deps needed — all providers use httpx
+{% endif %}

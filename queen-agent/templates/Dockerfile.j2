@@ -1,0 +1,26 @@
+# Agent: {{ codename }} — {{ full_name }}
+# Specialty: {{ specialty }}
+# Spawned by: OpenCLAW Queen
+
+FROM python:3.12-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /app
+WORKDIR /app
+
+RUN useradd -m -u 1000 user && chown -R user /app
+USER user
+
+EXPOSE 7860
+
+ENV AGENT_ID="{{ agent_id }}"
+ENV AGENT_NAME="{{ full_name }}"
+ENV P2P_API="https://api-production-ff1b.up.railway.app"
+
+CMD ["python", "app.py"]

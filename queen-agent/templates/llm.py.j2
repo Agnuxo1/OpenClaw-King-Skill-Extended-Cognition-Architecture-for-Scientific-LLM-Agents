@@ -1,0 +1,187 @@
+"""
+LLM Client for {{ full_name }} ({{ codename }}).
+
+Primary provider: {{ llm_provider }} / {{ llm_model }}
+Fallback: HuggingFace Inference API (Qwen2.5-72B)
+"""
+
+import os
+import time
+import httpx
+from typing import Optional
+
+# ── Primary provider: {{ llm_provider }} ─────────────────────────────────────
+{% if llm_provider == "groq" %}
+_PRIMARY_KEY  = os.getenv("{{ llm_env_var }}", "")
+_PRIMARY_BASE = "https://api.groq.com/openai/v1"
+_PRIMARY_MODEL = "{{ llm_model }}"
+_PRIMARY_NAME  = "Groq"
+
+def _try_primary(messages: list, max_tokens: int, temperature: float) -> Optional[str]:
+    if not _PRIMARY_KEY:
+        return None
+    try:
+        r = httpx.post(
+            f"{_PRIMARY_BASE}/chat/completions",
+            headers={"Authorization": f"Bearer {_PRIMARY_KEY}", "Content-Type": "application/json"},
+            json={"model": _PRIMARY_MODEL, "messages": messages,
+                  "max_tokens": max_tokens, "temperature": temperature},
+            timeout=90.0,
+        )
+        if r.status_code == 429:
+            time.sleep(60)
+            return None
+        r.raise_for_status()
+        return r.json()["choices"][0]["message"]["content"].strip()
+    except Exception:
+        return None
+
+{% elif llm_provider == "together" %}
+_PRIMARY_KEY  = os.getenv("{{ llm_env_var }}", "")
+_PRIMARY_BASE = "https://api.together.xyz/v1"
+_PRIMARY_MODEL = "{{ llm_model }}"
+_PRIMARY_NAME  = "Together AI"
+
+def _try_primary(messages: list, max_tokens: int, temperature: float) -> Optional[str]:
+    if not _PRIMARY_KEY:
+        return None
+    try:
+        r = httpx.post(
+            f"{_PRIMARY_BASE}/chat/completions",
+            headers={"Authorization": f"Bearer {_PRIMARY_KEY}", "Content-Type": "application/json"},
+            json={"model": _PRIMARY_MODEL, "messages": messages,
+                  "max_tokens": max_tokens, "temperature": temperature},
+            timeout=120.0,
+        )
+        if r.status_code == 429:
+            time.sleep(30)
+            return None
+        r.raise_for_status()
+        return r.json()["choices"][0]["message"]["content"].strip()
+    except Exception:
+        return None
+
+{% elif llm_provider == "inception" %}
+_PRIMARY_KEY  = os.getenv("{{ llm_env_var }}", "")
+_PRIMARY_BASE = "https://api.inceptionlabs.ai/v1"
+_PRIMARY_MODEL = "mercury-2"
+_PRIMARY_NAME  = "InceptionLabs"
+
+def _try_primary(messages: list, max_tokens: int, temperature: float) -> Optional[str]:
+    if not _PRIMARY_KEY:
+        return None
+    try:
+        r = httpx.post(
+            f"{_PRIMARY_BASE}/chat/completions",
+            headers={"Authorization": f"Bearer {_PRIMARY_KEY}", "Content-Type": "application/json"},
+            json={"model": _PRIMARY_MODEL, "messages": messages,
+                  "max_tokens": max_tokens, "temperature": temperature},
+            timeout=90.0,
+        )
+        if r.status_code == 429:
+            time.sleep(30)
+            return None
+        r.raise_for_status()
+        return r.json()["choices"][0]["message"]["content"].strip()
+    except Exception:
+        return None
+
+{% elif llm_provider == "openrouter" %}
+_PRIMARY_KEY  = os.getenv("{{ llm_env_var }}", "")
+_PRIMARY_BASE = "https://openrouter.ai/api/v1"
+_PRIMARY_MODEL = "{{ llm_model }}"
+_PRIMARY_NAME  = "OpenRouter"
+
+def _try_primary(messages: list, max_tokens: int, temperature: float) -> Optional[str]:
+    if not _PRIMARY_KEY:
+        return None
+    try:
+        r = httpx.post(
+            f"{_PRIMARY_BASE}/chat/completions",
+            headers={"Authorization": f"Bearer {_PRIMARY_KEY}",
+                     "Content-Type": "application/json",
+                     "X-Title": "OpenCLAW Agent"},
+            json={"model": _PRIMARY_MODEL, "messages": messages,
+                  "max_tokens": max_tokens, "temperature": temperature},
+            timeout=120.0,
+        )
+        if r.status_code == 429:
+            return None
+        r.raise_for_status()
+        return r.json()["choices"][0]["message"]["content"].strip()
+    except Exception:
+        return None
+
+{% else %}
+# Provider: hf (HuggingFace Router)
+_PRIMARY_KEY  = os.getenv("{{ llm_env_var }}", "")
+_PRIMARY_MODEL = "{{ llm_model }}"
+_PRIMARY_NAME  = "HuggingFace"
+
+def _try_primary(messages: list, max_tokens: int, temperature: float) -> Optional[str]:
+    if not _PRIMARY_KEY:
+        return None
+    url = f"https://api-inference.huggingface.co/models/{_PRIMARY_MODEL}/v1/chat/completions"
+    try:
+        r = httpx.post(
+            url,
+            headers={"Authorization": f"Bearer {_PRIMARY_KEY}", "Content-Type": "application/json"},
+            json={"model": _PRIMARY_MODEL, "messages": messages,
+                  "max_tokens": max_tokens, "temperature": min(temperature, 0.99),
+                  "stream": False},
+            timeout=120.0,
+        )
+        r.raise_for_status()
+        return r.json()["choices"][0]["message"]["content"].strip()
+    except Exception:
+        return None
+
+{% endif %}
+
+# ── HuggingFace fallback ───────────────────────────────────────────────────────
+_HF_TOKEN = os.getenv("HF_TOKEN_AGNUXO", os.getenv("HF_TOKEN", ""))
+_HF_URL   = "https://api-inference.huggingface.co/models/Qwen/Qwen2.5-72B-Instruct/v1/chat/completions"
+
+def _try_hf_fallback(messages: list, max_tokens: int, temperature: float) -> Optional[str]:
+    if not _HF_TOKEN:
+        return None
+    try:
+        r = httpx.post(
+            _HF_URL,
+            headers={"Authorization": f"Bearer {_HF_TOKEN}", "Content-Type": "application/json"},
+            json={"model": "Qwen/Qwen2.5-72B-Instruct", "messages": messages,
+                  "max_tokens": max_tokens, "temperature": min(temperature, 0.99),
+                  "stream": False},
+            timeout=120.0,
+        )
+        r.raise_for_status()
+        return r.json()["choices"][0]["message"]["content"].strip()
+    except Exception:
+        return None
+
+
+# ── Public API ────────────────────────────────────────────────────────────────
+
+def complete(
+    messages: list,
+    max_tokens: int = 4096,
+    temperature: float = 0.73,
+) -> str:
+    """
+    Call LLM: {{ llm_provider }}/{{ llm_model }} primary → HF fallback.
+    Raises RuntimeError if all providers fail.
+    """
+    result = _try_primary(messages, max_tokens, temperature)
+    if result:
+        return result
+
+    time.sleep(10)
+    result = _try_primary(messages, max_tokens, temperature)
+    if result:
+        return result
+
+    result = _try_hf_fallback(messages, max_tokens, temperature)
+    if result:
+        return result
+
+    raise RuntimeError(f"{{ codename }}: all LLM providers failed ({_PRIMARY_NAME} + HF fallback)")

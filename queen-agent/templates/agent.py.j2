@@ -1,0 +1,350 @@
+"""
+{{ full_name }} — Autonomous P2PCLAW Research Agent.
+
+Four concurrent daemon threads:
+  1. heartbeat  — keep agent online on the P2PCLAW network (every 60 s)
+  2. research   — generate & publish original scientific papers (every ~{{ research_interval // 60 }} min)
+  3. validation — peer-review mempool papers with LLM evaluation (every ~{{ validation_interval // 60 }} min)
+  4. social     — post intelligent insights and reactions to chat (every ~{{ social_interval // 60 }} min)
+
+Soul: {{ codename }} | Specialty: {{ specialty }} | Mission: {{ mission }}
+"""
+
+import os
+import random
+import threading
+import time
+import traceback
+from datetime import datetime, timezone
+from typing import Callable, Optional
+
+from p2p import P2PClient
+import papers as paper_engine
+
+# ── Agent identity ─────────────────────────────────────────────────────────────
+AGENT_ID   = os.getenv("AGENT_ID",   {{ agent_id | tojson }})
+AGENT_NAME = os.getenv("AGENT_NAME", {{ full_name | tojson }})
+AGENT_BIO  = {{ mission | tojson }}
+AGENT_INTERESTS = {{ interests | tojson }}
+
+# ── Timing (seconds) ───────────────────────────────────────────────────────────
+T_HEARTBEAT  = 60
+T_RESEARCH   = {{ research_interval }}
+T_VALIDATION = {{ validation_interval }}
+T_SOCIAL     = {{ social_interval }}
+
+_JITTER_RESEARCH   = {{ jitter_research }}
+_JITTER_VALIDATION = {{ jitter_validation }}
+_JITTER_SOCIAL     = {{ jitter_social }}
+
+MAX_PAPER_RETRIES = 3
+
+
+class {{ class_name }}:
+    """Fully autonomous P2PCLAW research agent — {{ codename }}."""
+
+    def __init__(self, log_callback: Optional[Callable[[str, str], None]] = None):
+        self.agent_id   = AGENT_ID
+        self.agent_name = AGENT_NAME
+        self.client     = P2PClient(self.agent_id, self.agent_name)
+        self._log_cb    = log_callback or (lambda msg, lvl: None)
+
+        # State
+        self.running           = False
+        self.registered        = False
+        self.rank              = "NEWCOMER"
+        self.papers_published  = 0
+        self.validations_done  = 0
+        self.messages_sent     = 0
+        self.last_action       = "Initializing..."
+        self.log_history: list[str] = []
+        self._validated_ids: set[str] = set()
+        self._recent_topics: list[str] = []
+
+    # ── Lifecycle ──────────────────────────────────────────────────────────────
+
+    def start(self):
+        if self.running:
+            return
+        self.running = True
+        self._log(f"🚀 {AGENT_NAME} starting...")
+
+        targets = [
+            ("heartbeat",  self._heartbeat_loop),
+            ("research",   self._research_loop),
+            ("validation", self._validation_loop),
+            ("social",     self._social_loop),
+        ]
+        for name, fn in targets:
+            t = threading.Thread(target=fn, name=name, daemon=True)
+            t.start()
+
+        self._log("✅ All loops launched — agent is live")
+
+    def stop(self):
+        self.running = False
+        try:
+            self.client.close()
+        except Exception:
+            pass
+        self._log("🛑 Agent stopped")
+
+    # ── Logging ───────────────────────────────────────────────────────────────
+
+    def _log(self, msg: str, level: str = "info"):
+        ts = datetime.now(timezone.utc).strftime("%H:%M:%S UTC")
+        entry = f"[{ts}] {msg}"
+        self.log_history.append(entry)
+        if len(self.log_history) > 300:
+            self.log_history = self.log_history[-300:]
+        self.last_action = msg
+        self._log_cb(entry, level)
+
+    # ── Registration ───────────────────────────────────────────────────────────
+
+    def _register(self):
+        try:
+            res = self.client.register(interests=AGENT_INTERESTS)
+            if res.get("success"):
+                self.registered = True
+                self.rank = res.get("rank", "NEWCOMER")
+                self._log(f"✅ Registered — Rank: {self.rank}")
+            else:
+                self.registered = True
+                self._log("ℹ️ Agent already in network, continuing")
+        except Exception as e:
+            self._log(f"⚠️ Registration failed: {e} — proceeding anyway", "warn")
+            self.registered = True
+
+        try:
+            info = self.client.get_rank()
+            self.rank = info.get("rank", self.rank)
+            self.papers_published = info.get("contributions", self.papers_published)
+        except Exception:
+            pass
+
+    # ── Thread: Heartbeat ──────────────────────────────────────────────────────
+
+    def _heartbeat_loop(self):
+        time.sleep({{ heartbeat_start_delay }})
+        self._register()
+        self._announce()
+
+        while self.running:
+            try:
+                self.client.register(interests=AGENT_INTERESTS)
+            except Exception:
+                pass
+            time.sleep(T_HEARTBEAT)
+
+    def _announce(self):
+        try:
+            self.client.chat({{ announce_message | tojson }})
+            self._log("📢 Announced arrival to network")
+        except Exception as e:
+            self._log(f"⚠️ Announcement failed: {e}", "warn")
+
+    # ── Thread: Research ───────────────────────────────────────────────────────
+
+    def _research_loop(self):
+        time.sleep({{ research_start_delay }})
+
+        while self.running:
+            try:
+                self._do_research_cycle()
+            except Exception:
+                self._log(f"❌ Research cycle error: {traceback.format_exc()[-300:]}", "error")
+
+            jitter = random.randint(-_JITTER_RESEARCH, _JITTER_RESEARCH)
+            time.sleep(T_RESEARCH + jitter)
+
+    def _do_research_cycle(self):
+        self._log("🔬 Starting research cycle...")
+        context = self._gather_context()
+
+        paper = None
+        for attempt in range(1, MAX_PAPER_RETRIES + 1):
+            try:
+                self._log(f"📝 Generating paper (attempt {attempt}/{MAX_PAPER_RETRIES})...")
+                paper = paper_engine.generate(self.agent_id, self.agent_name, context)
+                self._log(f"Draft ready: '{paper['title'][:70]}' ({len(paper['content'].split())} words)")
+                break
+            except Exception as e:
+                self._log(f"⚠️ Generation attempt {attempt} failed: {e}", "warn")
+                time.sleep(15 * attempt)
+
+        if paper is None:
+            self._log("❌ Paper generation failed after all retries", "error")
+            return
+
+        self._log("📤 Publishing to P2PCLAW...")
+        try:
+            res = self.client.publish_paper(paper)
+        except Exception as e:
+            self._log(f"❌ Publish request failed: {e}", "error")
+            return
+
+        if res.get("success"):
+            self.papers_published += 1
+            pid    = res.get("paperId", "?")
+            words  = res.get("word_count", "?")
+            status = res.get("status", "MEMPOOL")
+            rank_u = res.get("rank_update", "")
+
+            self._log(
+                f"✅ Published! ID: {pid} | {words} words | {status}"
+                + (f" | 🏆 {rank_u}" if rank_u else "")
+            )
+
+            self._recent_topics.append(paper["title"])
+            if len(self._recent_topics) > 10:
+                self._recent_topics = self._recent_topics[-10:]
+
+            try:
+                self.client.chat(
+                    f"📢 New paper: **'{paper['title'][:90]}'** "
+                    f"| {words} words | Now in mempool for peer review."
+                )
+            except Exception:
+                pass
+
+            try:
+                info = self.client.get_rank()
+                self.rank = info.get("rank", self.rank)
+            except Exception:
+                pass
+        else:
+            error  = res.get("error", "unknown error")
+            hint   = res.get("hint", "")
+            issues = "; ".join(res.get("issues", []))
+            self._log(
+                f"⚠️ Publish rejected: {error}"
+                + (f" — {hint}" if hint else "")
+                + (f" | {issues}" if issues else ""),
+                "warn",
+            )
+
+    def _gather_context(self) -> str:
+        try:
+            latest = self.client.get_latest_papers(limit=5)
+            if not latest:
+                return ""
+            titles = [p.get("title", "") for p in latest if p.get("title")]
+            return "Recent network research: " + " | ".join(titles[:4])
+        except Exception:
+            return ""
+
+    # ── Thread: Validation ─────────────────────────────────────────────────────
+
+    def _validation_loop(self):
+        time.sleep({{ validation_start_delay }})
+
+        while self.running:
+            try:
+                self._do_validation_cycle()
+            except Exception as e:
+                self._log(f"⚠️ Validation cycle error: {e}", "warn")
+
+            jitter = random.randint(-_JITTER_VALIDATION, _JITTER_VALIDATION)
+            time.sleep(T_VALIDATION + jitter)
+
+    def _do_validation_cycle(self):
+        try:
+            mempool = self.client.get_mempool(limit=30)
+        except Exception as e:
+            self._log(f"⚠️ Mempool fetch failed: {e}", "warn")
+            return
+
+        candidates = [
+            p for p in mempool
+            if p.get("author_id") != self.agent_id
+            and p.get("id") not in self._validated_ids
+        ]
+
+        if not candidates:
+            self._log("📭 No new papers in mempool to validate")
+            return
+
+        to_validate = random.sample(candidates, min(3, len(candidates)))
+        self._log(f"🔍 Reviewing {len(to_validate)} mempool paper(s)...")
+
+        for paper in to_validate:
+            self._validate_one(paper)
+            time.sleep(10)
+
+    def _validate_one(self, paper: dict):
+        pid     = paper.get("id", "?")
+        title   = paper.get("title", "Untitled")
+        content = paper.get("content", "")
+
+        try:
+            approve, score, reason = paper_engine.evaluate_paper_quality(title, content)
+        except Exception as e:
+            self._log(f"⚠️ LLM eval failed for {pid}: {e}", "warn")
+            approve, score, reason = True, 0.75, "Fallback approval"
+
+        try:
+            res = self.client.validate_paper(pid, approve, score)
+        except Exception as e:
+            self._log(f"⚠️ Validate request failed for {pid}: {e}", "warn")
+            return
+
+        if res.get("success"):
+            self._validated_ids.add(pid)
+            self.validations_done += 1
+            icon = "✅" if approve else "❌"
+            action = res.get("action", "VALIDATED")
+            self._log(f"{icon} Validated '{title[:55]}' | {action} | score={score:.2f} | {reason[:60]}")
+        else:
+            self._log(f"ℹ️ Validation skipped for {pid}: {res.get('error', 'see API')}")
+
+    # ── Thread: Social ─────────────────────────────────────────────────────────
+
+    def _social_loop(self):
+        time.sleep({{ social_start_delay }})
+
+        while self.running:
+            try:
+                self._do_social()
+            except Exception as e:
+                self._log(f"⚠️ Social cycle error: {e}", "warn")
+
+            jitter = random.randint(-_JITTER_SOCIAL, _JITTER_SOCIAL)
+            time.sleep(T_SOCIAL + jitter)
+
+    def _do_social(self):
+        recent_titles: list[str] = []
+        try:
+            papers = self.client.get_latest_papers(limit=6)
+            recent_titles = [p.get("title", "") for p in papers if p.get("title")]
+        except Exception:
+            pass
+
+        try:
+            msg = paper_engine.generate_chat_insight(recent_titles, self.agent_name)
+        except Exception as e:
+            self._log(f"⚠️ Chat insight generation failed: {e}", "warn")
+            return
+
+        try:
+            res = self.client.chat(f"💡 {msg}")
+            if res.get("success"):
+                self.messages_sent += 1
+                self._log(f"Posted insight: '{msg[:80]}'")
+        except Exception as e:
+            self._log(f"⚠️ Chat post failed: {e}", "warn")
+
+    # ── Stats ──────────────────────────────────────────────────────────────────
+
+    def get_stats(self) -> dict:
+        return {
+            "agent_id":         self.agent_id,
+            "agent_name":       self.agent_name,
+            "rank":             self.rank,
+            "running":          self.running,
+            "papers_published": self.papers_published,
+            "validations_done": self.validations_done,
+            "messages_sent":    self.messages_sent,
+            "last_action":      self.last_action,
+            "log_tail":         self.log_history[-40:],
+        }
