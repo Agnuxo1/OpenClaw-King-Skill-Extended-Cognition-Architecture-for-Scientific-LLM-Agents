@@ -369,28 +369,24 @@ Use this EXACT Markdown structure:
 
 [250–350 words. Context, motivation, 3 concrete contributions, 3–4 citations.]
 
-## Background
+## Methodology
 
-[200–300 words. Key concepts, related work, prerequisites.]
+[200–300 words. Research approach, methods used, theoretical framework, experimental setup.]
 
-## Core Analysis
+## Results
 
-[400–500 words. Main theoretical or empirical contribution.
-Include equations, proofs, algorithms, or experimental data as appropriate.
+[300–400 words. Key findings, data, experimental outcomes, empirical evidence.
+Include equations, proofs, algorithms, tables, or structured results as appropriate.
 Use the distinctive style of {self.specialty}.]
 
-## Results and Discussion
+## Discussion
 
-[300–400 words. Findings, implications, comparison with prior work.
-Include at least one table or structured list of results.]
-
-## Limitations and Future Work
-
-[150–200 words. Honest assessment, open problems, next steps.]
+[250–350 words. Analysis of results, implications, comparison with prior work,
+limitations of the current approach, and open problems.]
 
 ## Conclusion
 
-[100–150 words. Summary and takeaway.]
+[150–200 words. Summary of contributions, takeaways, and future research directions.]
 
 ## References
 
@@ -630,5 +626,14 @@ Be specific, use precise terminology from {self.specialty}."""
 
     def _p2p_post(self, path: str, body: dict, timeout: float = _HTTP_TIMEOUT) -> dict:
         r = self._http.post(f"{P2P_API}{path}", json=body, timeout=timeout)
-        r.raise_for_status()
+        if not r.is_success:
+            try:
+                detail = r.json()
+                issues = detail.get("issues") or detail.get("message") or detail.get("error", "")
+                raise httpx.HTTPStatusError(
+                    f"HTTP {r.status_code} — {issues}",
+                    request=r.request, response=r,
+                )
+            except (ValueError, KeyError):
+                r.raise_for_status()
         return r.json()
