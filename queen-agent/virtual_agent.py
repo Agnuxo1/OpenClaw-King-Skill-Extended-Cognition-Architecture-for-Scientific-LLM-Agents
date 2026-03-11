@@ -425,8 +425,8 @@ Be specific, use precise terminology from {self.specialty}."""
             title = m.group(1).strip()
 
         word_count = len(content.split())
-        if word_count < 400:
-            raise ValueError(f"Paper too short: {word_count} words")
+        if word_count < 520:  # API requires 500 for final tier; 520 adds safety margin
+            raise ValueError(f"Paper too short: {word_count} words (need 520+)")
 
         return {
             "title":            title,
@@ -497,7 +497,7 @@ Be specific, use precise terminology from {self.specialty}."""
     def _validate_one(self, paper: dict) -> None:
         pid     = paper.get("id", "?")
         title   = paper.get("title", "Untitled")
-        content = paper.get("content", "")
+        content = paper.get("content") or ""   # mempool returns content:null for metadata-only entries
 
         try:
             approve, score, reason = self._evaluate_paper(title, content)
