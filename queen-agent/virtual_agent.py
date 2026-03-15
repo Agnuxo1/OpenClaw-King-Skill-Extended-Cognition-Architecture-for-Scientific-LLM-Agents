@@ -363,46 +363,67 @@ Use this EXACT Markdown structure:
 
 ## Abstract
 
-[150–200 words. State the research problem, methodology, key findings.]
+[Minimum 400 words. Dense, precise. Cover: (1) the research problem and why it matters,
+(2) your specific approach and key technical insight, (3) quantitative results with numbers,
+(4) broader significance and impact on the field. No vague claims — cite specific findings.]
 
 ## Introduction
 
-[250–350 words. Context, motivation, 3 concrete contributions, 3–4 citations.]
+[Minimum 700 words. Cover: (1) why this problem matters with 2 concrete real-world examples,
+(2) current state-of-the-art and its specific limitations (name the methods),
+(3) your 3 precise contributions with measurable impact, (4) paper roadmap.
+Include 3–4 inline citations and 2 LaTeX equations, e.g. $$\nabla^2\psi + k^2\psi = 0$$]
 
 ## Methodology
 
-[200–300 words. Research approach, methods used, theoretical framework, experimental setup.]
+[Minimum 700 words. Full technical description. MUST include a complete Python code block:
+```python
+import numpy as np
+# Complete, runnable implementation — no stubs or ellipsis
+# With type annotations, docstrings, and error handling
+```
+Explain every design decision, parameter choice, and algorithmic complexity O(n). Be concrete.]
 
 ## Results
 
-[300–400 words. Key findings, data, experimental outcomes, empirical evidence.
-Include equations, proofs, algorithms, tables, or structured results as appropriate.
-Use the distinctive style of {self.specialty}.]
+[Minimum 700 words. MUST include a Markdown comparison table with at least 5 rows:
+| Method | Dataset | Metric | Score | Notes |
+|--------|---------|--------|-------|-------|
+Report: mean ± std across ≥3 runs, 95% confidence intervals, p-values, Cohen's d.
+Classify outcome as CONFIRMED / REFUTED / INCONCLUSIVE vs. pre-registered threshold.]
 
 ## Discussion
 
-[250–350 words. Analysis of results, implications, comparison with prior work,
-limitations of the current approach, and open problems.]
+[Minimum 600 words. Include: (1) causal interpretation of each result,
+(2) comparison with 4+ prior works by name with quantitative differences,
+(3) theoretical implications for the field.
+MUST include 3 LaTeX equations, e.g. $$S = -k_B\sum_i p_i \ln p_i$$
+(4) limitations and concrete mitigation strategies for each.]
 
 ## Conclusion
 
-[150–200 words. Summary of contributions, takeaways, and future research directions.]
+[Minimum 350 words. (1) Restate the problem and your solution in plain language.
+(2) Enumerate 3 main contributions with specific, quantified impact.
+(3) Propose 3 concrete future research directions with rationale and suggested methodology.]
 
 ## References
 
-[10–14 realistic references in standard format.]
+[12–16 realistic academic citations in APA format:
+Author, A. B., & Author, C. D. (Year). Title. *Journal*, vol(issue), pp. DOI.
+Draw from: relevant scientific fields, arXiv, Nature, Science, top-tier conferences.]
 
 ---
 Writing style: {self.writing_style}
-Minimum: 800 words of substantive content.
-Be specific, use precise terminology from {self.specialty}."""
+IMPORTANT: Minimum 2500 words of substantive content (~3000 tokens). There is NO maximum length.
+The longer, more detailed, and more rigorous the paper, the better.
+Be specific, technical, and use precise terminology from {self.specialty}."""
 
         content = llm_module.complete(
             messages=[
                 {"role": "system", "content": self._system_prompt},
                 {"role": "user",   "content": prompt},
             ],
-            max_tokens=4500,
+            max_tokens=8000,
             temperature=0.73,
         )
 
@@ -421,8 +442,8 @@ Be specific, use precise terminology from {self.specialty}."""
             title = m.group(1).strip()
 
         word_count = len(content.split())
-        if word_count < 520:  # API requires 500 for final tier; 520 adds safety margin
-            raise ValueError(f"Paper too short: {word_count} words (need 520+)")
+        if word_count < 2250:  # Minimum 3000 tokens ≈ 2250 words
+            raise ValueError(f"Paper too short: {word_count} words (need 2250+ ≈ 3000 tokens)")
 
         return {
             "title":            title,
