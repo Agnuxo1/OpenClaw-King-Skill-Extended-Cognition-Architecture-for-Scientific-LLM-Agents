@@ -26,7 +26,8 @@ _SYSTEM = {{ papers_system_prompt | tojson }}
 _STYLE_NOTE = """
 Writing style: {{ writing_style }}
 Personality: {{ personality }}
-Minimum: 900 words of substantive content.
+IMPORTANT: Minimum 2500 words of substantive content (~3000 tokens). There is NO maximum length.
+The longer, more detailed, and more rigorous the paper, the better.
 Format papers in clean Markdown with all mandatory sections present.
 """
 
@@ -50,40 +51,50 @@ Use this EXACT Markdown structure (preserve bold metadata lines verbatim):
 
 ## Abstract
 
-[150–200 words. State: the research question, methodology, key finding, and significance.]
+[Minimum 400 words. Cover: (1) research problem and why it matters, (2) your approach
+and key technical insight, (3) quantitative results with specific numbers,
+(4) broader significance. Dense and precise — no vague claims.]
 
 ## Introduction
 
-[250–350 words. Motivate the topic. State 3 concrete contributions. \
-Include 3–4 inline citations.]
+[Minimum 700 words. Cover: (1) why this problem matters with 2 real-world examples,
+(2) current state-of-the-art and its specific limitations (name the methods),
+(3) your 3 precise contributions with measurable impact, (4) paper roadmap.
+Include 3–4 inline citations and 1–2 LaTeX equations.]
 
 ## Background
 
-[200–300 words. Define key concepts. Describe prior work and its limitations.]
+[Minimum 500 words. Define key concepts rigorously. Describe prior work with depth —
+what each approach does, where it fails, and what gap your work fills.
+Include a SOTA comparison table.]
 
 ## Methodology
 
-[300–450 words. Describe your approach in precise detail. \
-Include mathematical formulations, algorithms, or protocols as appropriate.]
+[Minimum 700 words. Full technical description with a complete Python code block:
+```python
+# Complete, runnable implementation — no stubs or pseudocode
+```
+Cover: algorithm design, parameter choices with justification, complexity O(n).]
 
 ## Results and Analysis
 
-[300–400 words. Present findings with specific numbers, comparisons, or proofs. \
-Use a table or structured list if helpful.]
+[Minimum 700 words. MUST include a Markdown comparison table with ≥5 rows.
+Report: mean ± std, 95% CI, p-values, Cohen's d. Label outcome CONFIRMED/REFUTED/INCONCLUSIVE.]
 
 ## Discussion
 
-[200–300 words. Interpret results. Acknowledge limitations. Describe implications \
-for P2P distributed AI systems.]
+[Minimum 500 words. Include: causal interpretation, comparison with 4+ named prior works,
+theoretical implications. MUST include 2+ LaTeX equations. Address limitations honestly.]
 
 ## Conclusion
 
-[100–150 words. Summarise contributions. State future directions.]
+[Minimum 300 words. Enumerate 3 contributions with quantified impact.
+Propose 3 concrete future directions with rationale.]
 
 ## References
 
-[6–10 references in APA format. Mix academic papers (arXiv, journals) with \
-relevant technical sources.]
+[12–16 citations in APA format. Mix academic papers (arXiv, journals, top conferences) \
+with relevant technical sources.]
 """
 
 
@@ -98,7 +109,7 @@ def generate(agent_id: str, agent_name: str, context: str = "") -> dict:
         {"role": "user",    "content": prompt},
     ]
 
-    content = complete(messages, max_tokens=4500, temperature=0.73)
+    content = complete(messages, max_tokens=8000, temperature=0.73)
 
     # Extract title from first H1
     title_match = re.search(r"^#\s+(.+)$", content, re.MULTILINE)
