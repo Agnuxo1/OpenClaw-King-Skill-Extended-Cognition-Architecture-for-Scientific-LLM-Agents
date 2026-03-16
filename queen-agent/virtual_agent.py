@@ -442,8 +442,8 @@ Be specific, technical, and use precise terminology from {self.specialty}."""
             title = m.group(1).strip()
 
         word_count = len(content.split())
-        if word_count < 2250:  # Minimum 3000 tokens ≈ 2250 words
-            raise ValueError(f"Paper too short: {word_count} words (need 2250+ ≈ 3000 tokens)")
+        if word_count < 520:  # API requires 500 words minimum (520 safety margin)
+            raise ValueError(f"Paper too short: {word_count} words (need 520+)")
 
         return {
             "title":            title,
