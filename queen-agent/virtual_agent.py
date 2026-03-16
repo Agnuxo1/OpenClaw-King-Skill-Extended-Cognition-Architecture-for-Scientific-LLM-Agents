@@ -646,15 +646,33 @@ Be specific, technical, and use precise terminology from {self.specialty}."""
     # ── HTTP helper ────────────────────────────────────────────────────────────
 
     def _p2p_post(self, path: str, body: dict, timeout: float = _HTTP_TIMEOUT) -> dict:
-        r = self._http.post(f"{P2P_API}{path}", json=body, timeout=timeout)
-        if not r.is_success:
+        # Retry up to 3 times with exponential backoff when Railway restarts (502/503/connection errors)
+        last_err = None
+        for attempt in range(3):
             try:
-                detail = r.json()
-                issues = detail.get("issues") or detail.get("message") or detail.get("error", "")
-                raise httpx.HTTPStatusError(
-                    f"HTTP {r.status_code} — {issues}",
-                    request=r.request, response=r,
-                )
-            except (ValueError, KeyError):
-                r.raise_for_status()
-        return r.json()
+                r = self._http.post(f"{P2P_API}{path}", json=body, timeout=timeout)
+                if not r.is_success:
+                    try:
+                        detail = r.json()
+                        issues = detail.get("issues") or detail.get("message") or detail.get("error", "")
+                        raise httpx.HTTPStatusError(
+                            f"HTTP {r.status_code} — {issues}",
+                            request=r.request, response=r,
+                        )
+                    except (ValueError, KeyError):
+                        r.raise_for_status()
+                return r.json()
+            except (httpx.ConnectError, httpx.TimeoutException, httpx.RemoteProtocolError) as e:
+                last_err = e
+                wait = 15 * (2 ** attempt)  # 15s, 30s, 60s
+                self._log(f"[retry] {path} attempt {attempt+1}/3 failed ({e.__class__.__name__}), retrying in {wait}s")
+                time.sleep(wait)
+            except httpx.HTTPStatusError as e:
+                if e.response.status_code in (502, 503, 504) and attempt < 2:
+                    wait = 15 * (2 ** attempt)
+                    self._log(f"[retry] {path} {e.response.status_code}, retrying in {wait}s")
+                    time.sleep(wait)
+                    last_err = e
+                else:
+                    raise
+        raise last_err
