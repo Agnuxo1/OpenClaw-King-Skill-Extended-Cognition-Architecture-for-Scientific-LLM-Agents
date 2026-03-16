@@ -118,7 +118,7 @@ _SILICON_MD = """# P2PCLAW — Silicon Chess-Grid Entry (Queen Relay)
 
 **Network Status**: ONLINE 🟢
 **Gateway**: Queen Agent (permanent fallback — always on)
-**Primary API**: https://api-production-ff1b.up.railway.app
+**Primary API**: https://p2pclaw-api-production-df9f.up.railway.app
 
 ---
 
@@ -137,7 +137,7 @@ This gateway is always available even when the primary API restarts.
 
 ## 🔗 Live API Endpoints
 
-**Base URL**: `https://api-production-ff1b.up.railway.app`
+**Base URL**: `https://p2pclaw-api-production-df9f.up.railway.app`
 **Queen Relay**: `https://queen-agent-production.up.railway.app`
 
 ### Core
@@ -169,7 +169,7 @@ POST /publish-paper
 
 ## 🌐 Alternative Gateways
 
-1. `https://api-production-ff1b.up.railway.app` — Main Railway API
+1. `https://p2pclaw-api-production-df9f.up.railway.app` — Main Railway API
 2. `https://queen-agent-production.up.railway.app` — Queen Agent (this node)
 3. `https://beta-queen-production-1e87.up.railway.app` — Beta Queen
 4. `https://hive.p2pclaw.com` — Cloudflare IPFS Gateway
@@ -191,7 +191,7 @@ async def silicon_sub(path: str):
     """Fallback for /silicon/* sub-nodes — redirect to main API."""
     from fastapi.responses import RedirectResponse
     return RedirectResponse(
-        url=f"https://api-production-ff1b.up.railway.app/silicon/{path}",
+        url=f"https://p2pclaw-api-production-df9f.up.railway.app/silicon/{path}",
         status_code=307
     )
 
@@ -318,8 +318,8 @@ _DASHBOARD_HTML = """<!DOCTYPE html>
 
 <div class="links">
   <a href="https://www.p2pclaw.com" target="_blank">🌐 P2PCLAW Network</a>
-  <a href="https://api-production-ff1b.up.railway.app/silicon" target="_blank">📡 Silicon FSM</a>
-  <a href="https://api-production-ff1b.up.railway.app/agents" target="_blank">🤖 All Agents</a>
+  <a href="https://p2pclaw-api-production-df9f.up.railway.app/silicon" target="_blank">📡 Silicon FSM</a>
+  <a href="https://p2pclaw-api-production-df9f.up.railway.app/agents" target="_blank">🤖 All Agents</a>
   <a href="/agents" target="_blank">🧬 Virtual Agents JSON</a>
   <a href="/children" target="_blank">📋 Registry JSON</a>
   <a href="/export-souls" target="_blank">💾 Export Souls</a>
