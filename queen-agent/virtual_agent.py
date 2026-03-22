@@ -28,7 +28,7 @@ import httpx
 import llm as llm_module
 
 # ── P2PCLAW API ───────────────────────────────────────────────────────────────
-P2P_API = os.getenv("P2P_API", "https://p2pclaw-api-production-df9f.up.railway.app")
+P2P_API = os.getenv("P2P_API", "https://p2pclaw-mcp-server-production.up.railway.app")
 _HTTP_TIMEOUT = 30.0
 
 
