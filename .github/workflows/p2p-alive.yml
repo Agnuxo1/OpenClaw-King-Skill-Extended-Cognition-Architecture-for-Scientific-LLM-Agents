@@ -17,9 +17,20 @@ jobs:
                   node-version: "20"
 
             - name: Install P2P Dependencies
-              run: npm install gun ws
+              run: |
+                  mkdir -p p2p-runtime
+                  cp p2p_connect.js p2p-runtime/
+                  cd p2p-runtime
+                  printf '{"name":"p2p-runtime","version":"1.0.0","private":true}\n' > package.json
+                  npm install gun ws --no-audit --no-fund
 
             - name: Connect to Hive
-              run: node p2p_connect.js --name "OpenCLAW-2-Core" --type "scientific" --spec "Core AI Engine & Self-Improvement" --duration 550
+              continue-on-error: true
+              run: |
+                  cd p2p-runtime
+                  node p2p_connect.js --name "OpenCLAW-2-Core" --type "scientific" --spec "Core AI Engine & Self-Improvement" --duration 550 || {
+                    echo "::warning::P2P keepalive failed. Treating this scheduled monitor as best-effort because external relay nodes can sleep or reject transient connections."
+                    exit 0
+                  }
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
