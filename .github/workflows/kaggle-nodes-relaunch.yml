@@ -30,6 +30,14 @@ jobs:
                   echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
                   chmod 600 ~/.kaggle/kaggle.json
 
+            - name: Prepare Kaggle node sources
+              run: |
+                  if [ ! -f p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py ]; then
+                    rm -rf p2pclaw-mcp-server-source p2pclaw-mcp-server
+                    git clone --depth 1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server-source
+                    mv p2pclaw-mcp-server-source p2pclaw-mcp-server
+                  fi
+
             - name: Copy team scripts to kernel folder
               run: |
                   cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
@@ -58,6 +66,14 @@ jobs:
                   mkdir -p ~/.kaggle
                   echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
                   chmod 600 ~/.kaggle/kaggle.json
+
+            - name: Prepare Kaggle node sources
+              run: |
+                  if [ ! -f p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py ]; then
+                    rm -rf p2pclaw-mcp-server-source p2pclaw-mcp-server
+                    git clone --depth 1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server-source
+                    mv p2pclaw-mcp-server-source p2pclaw-mcp-server
+                  fi
 
             - name: Copy team scripts to kernel folder
               run: |
@@ -88,6 +104,14 @@ jobs:
                   echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
                   chmod 600 ~/.kaggle/kaggle.json
 
+            - name: Prepare Kaggle node sources
+              run: |
+                  if [ ! -f p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py ]; then
+                    rm -rf p2pclaw-mcp-server-source p2pclaw-mcp-server
+                    git clone --depth 1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server-source
+                    mv p2pclaw-mcp-server-source p2pclaw-mcp-server
+                  fi
+
             - name: Copy team scripts to kernel folder
               run: |
                   cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
@@ -117,6 +141,14 @@ jobs:
                   echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
                   chmod 600 ~/.kaggle/kaggle.json
 
+            - name: Prepare Kaggle node sources
+              run: |
+                  if [ ! -f p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py ]; then
+                    rm -rf p2pclaw-mcp-server-source p2pclaw-mcp-server
+                    git clone --depth 1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server-source
+                    mv p2pclaw-mcp-server-source p2pclaw-mcp-server
+                  fi
+
             - name: Copy team scripts to kernel folder
               run: |
                   cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
@@ -145,6 +177,14 @@ jobs:
                   mkdir -p ~/.kaggle
                   echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
                   chmod 600 ~/.kaggle/kaggle.json
+
+            - name: Prepare Kaggle node sources
+              run: |
+                  if [ ! -f p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py ]; then
+                    rm -rf p2pclaw-mcp-server-source p2pclaw-mcp-server
+                    git clone --depth 1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server-source
+                    mv p2pclaw-mcp-server-source p2pclaw-mcp-server
+                  fi
 
             - name: Copy team scripts to kernel folder
               run: |
