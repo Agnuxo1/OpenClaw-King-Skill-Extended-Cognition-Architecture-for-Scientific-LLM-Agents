@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
 # Establecer directorio de trabajo
 WORKDIR /app
 
+RUN corepack enable && corepack prepare pnpm@10.23.0 --activate
+
 # Copiar archivos de configuración de Node.js
 COPY package*.json ./
 RUN npm install
