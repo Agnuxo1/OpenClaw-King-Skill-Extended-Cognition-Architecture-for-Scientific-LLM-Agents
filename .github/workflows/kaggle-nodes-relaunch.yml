@@ -18,19 +18,28 @@ jobs:
     # ──────────────────────────────────────────────
     kaggle-quantum:
         runs-on: ubuntu-latest
+        env:
+            KAGGLE_JSON_AGNUXO: ${{ secrets.KAGGLE_JSON_AGNUXO }}
         steps:
             - uses: actions/checkout@v4
 
+            - name: Skip when Kaggle credentials are unavailable
+              if: env.KAGGLE_JSON_AGNUXO == ''
+              run: echo "::notice::KAGGLE_JSON_AGNUXO is not configured; skipping Kaggle kernel relaunch."
+
             - name: Install Kaggle CLI
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: pip install kaggle --quiet
 
             - name: Write kaggle.json
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   mkdir -p ~/.kaggle
-                  echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
+                  printf "%s" "$KAGGLE_JSON_AGNUXO" > ~/.kaggle/kaggle.json
                   chmod 600 ~/.kaggle/kaggle.json
 
             - name: Prepare Kaggle node sources
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   if [ ! -f p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py ]; then
                     rm -rf p2pclaw-mcp-server-source p2pclaw-mcp-server
@@ -39,6 +48,7 @@ jobs:
                   fi
 
             - name: Copy team scripts to kernel folder
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
                      p2pclaw-mcp-server/kaggle-nodes/kernels/agnuxo/kaggle_research_node.py
@@ -46,6 +56,7 @@ jobs:
                      p2pclaw-mcp-server/kaggle-nodes/kernels/agnuxo/agnuxo_team.py
 
             - name: Push kernel (quantum team)
+              if: env.KAGGLE_JSON_AGNUXO != ''
               working-directory: p2pclaw-mcp-server/kaggle-nodes/kernels/agnuxo
               run: PYTHONUTF8=1 kaggle kernels push -p .
 
@@ -55,19 +66,28 @@ jobs:
     # ──────────────────────────────────────────────
     kaggle-materials:
         runs-on: ubuntu-latest
+        env:
+            KAGGLE_JSON_AGNUXO: ${{ secrets.KAGGLE_JSON_AGNUXO }}
         steps:
             - uses: actions/checkout@v4
 
+            - name: Skip when Kaggle credentials are unavailable
+              if: env.KAGGLE_JSON_AGNUXO == ''
+              run: echo "::notice::KAGGLE_JSON_AGNUXO is not configured; skipping Kaggle kernel relaunch."
+
             - name: Install Kaggle CLI
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: pip install kaggle --quiet
 
             - name: Write kaggle.json
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   mkdir -p ~/.kaggle
-                  echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
+                  printf "%s" "$KAGGLE_JSON_AGNUXO" > ~/.kaggle/kaggle.json
                   chmod 600 ~/.kaggle/kaggle.json
 
             - name: Prepare Kaggle node sources
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   if [ ! -f p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py ]; then
                     rm -rf p2pclaw-mcp-server-source p2pclaw-mcp-server
@@ -76,6 +96,7 @@ jobs:
                   fi
 
             - name: Copy team scripts to kernel folder
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
                      p2pclaw-mcp-server/kaggle-nodes/kernels/charlysmith/kaggle_research_node.py
@@ -83,6 +104,7 @@ jobs:
                      p2pclaw-mcp-server/kaggle-nodes/kernels/charlysmith/charlysmith_team.py
 
             - name: Push kernel (materials team)
+              if: env.KAGGLE_JSON_AGNUXO != ''
               working-directory: p2pclaw-mcp-server/kaggle-nodes/kernels/charlysmith
               run: PYTHONUTF8=1 kaggle kernels push -p .
 
@@ -92,19 +114,28 @@ jobs:
     # ──────────────────────────────────────────────
     kaggle-neuro:
         runs-on: ubuntu-latest
+        env:
+            KAGGLE_JSON_AGNUXO: ${{ secrets.KAGGLE_JSON_AGNUXO }}
         steps:
             - uses: actions/checkout@v4
 
+            - name: Skip when Kaggle credentials are unavailable
+              if: env.KAGGLE_JSON_AGNUXO == ''
+              run: echo "::notice::KAGGLE_JSON_AGNUXO is not configured; skipping Kaggle kernel relaunch."
+
             - name: Install Kaggle CLI
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: pip install kaggle --quiet
 
             - name: Write kaggle.json
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   mkdir -p ~/.kaggle
-                  echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
+                  printf "%s" "$KAGGLE_JSON_AGNUXO" > ~/.kaggle/kaggle.json
                   chmod 600 ~/.kaggle/kaggle.json
 
             - name: Prepare Kaggle node sources
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   if [ ! -f p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py ]; then
                     rm -rf p2pclaw-mcp-server-source p2pclaw-mcp-server
@@ -113,6 +144,7 @@ jobs:
                   fi
 
             - name: Copy team scripts to kernel folder
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
                      p2pclaw-mcp-server/kaggle-nodes/kernels/escritoresanalfabeto/kaggle_research_node.py
@@ -120,6 +152,7 @@ jobs:
                      p2pclaw-mcp-server/kaggle-nodes/kernels/escritoresanalfabeto/escritoresanalfabeto_team.py
 
             - name: Push kernel (neuro team)
+              if: env.KAGGLE_JSON_AGNUXO != ''
               working-directory: p2pclaw-mcp-server/kaggle-nodes/kernels/escritoresanalfabeto
               run: PYTHONUTF8=1 kaggle kernels push -p .
 
@@ -129,19 +162,28 @@ jobs:
     # ──────────────────────────────────────────────
     kaggle-math:
         runs-on: ubuntu-latest
+        env:
+            KAGGLE_JSON_AGNUXO: ${{ secrets.KAGGLE_JSON_AGNUXO }}
         steps:
             - uses: actions/checkout@v4
 
+            - name: Skip when Kaggle credentials are unavailable
+              if: env.KAGGLE_JSON_AGNUXO == ''
+              run: echo "::notice::KAGGLE_JSON_AGNUXO is not configured; skipping Kaggle kernel relaunch."
+
             - name: Install Kaggle CLI
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: pip install kaggle --quiet
 
             - name: Write kaggle.json
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   mkdir -p ~/.kaggle
-                  echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
+                  printf "%s" "$KAGGLE_JSON_AGNUXO" > ~/.kaggle/kaggle.json
                   chmod 600 ~/.kaggle/kaggle.json
 
             - name: Prepare Kaggle node sources
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   if [ ! -f p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py ]; then
                     rm -rf p2pclaw-mcp-server-source p2pclaw-mcp-server
@@ -150,6 +192,7 @@ jobs:
                   fi
 
             - name: Copy team scripts to kernel folder
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
                      p2pclaw-mcp-server/kaggle-nodes/kernels/karmakindle/kaggle_research_node.py
@@ -157,6 +200,7 @@ jobs:
                      p2pclaw-mcp-server/kaggle-nodes/kernels/karmakindle/karmakindle_team.py
 
             - name: Push kernel (math team)
+              if: env.KAGGLE_JSON_AGNUXO != ''
               working-directory: p2pclaw-mcp-server/kaggle-nodes/kernels/karmakindle
               run: PYTHONUTF8=1 kaggle kernels push -p .
 
@@ -166,19 +210,28 @@ jobs:
     # ──────────────────────────────────────────────
     kaggle-astro:
         runs-on: ubuntu-latest
+        env:
+            KAGGLE_JSON_AGNUXO: ${{ secrets.KAGGLE_JSON_AGNUXO }}
         steps:
             - uses: actions/checkout@v4
 
+            - name: Skip when Kaggle credentials are unavailable
+              if: env.KAGGLE_JSON_AGNUXO == ''
+              run: echo "::notice::KAGGLE_JSON_AGNUXO is not configured; skipping Kaggle kernel relaunch."
+
             - name: Install Kaggle CLI
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: pip install kaggle --quiet
 
             - name: Write kaggle.json
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   mkdir -p ~/.kaggle
-                  echo '${{ secrets.KAGGLE_JSON_AGNUXO }}' > ~/.kaggle/kaggle.json
+                  printf "%s" "$KAGGLE_JSON_AGNUXO" > ~/.kaggle/kaggle.json
                   chmod 600 ~/.kaggle/kaggle.json
 
             - name: Prepare Kaggle node sources
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   if [ ! -f p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py ]; then
                     rm -rf p2pclaw-mcp-server-source p2pclaw-mcp-server
@@ -187,6 +240,7 @@ jobs:
                   fi
 
             - name: Copy team scripts to kernel folder
+              if: env.KAGGLE_JSON_AGNUXO != ''
               run: |
                   cp p2pclaw-mcp-server/kaggle-nodes/kaggle_research_node.py \
                      p2pclaw-mcp-server/kaggle-nodes/kernels/nebulaagi/kaggle_research_node.py
@@ -194,5 +248,6 @@ jobs:
                      p2pclaw-mcp-server/kaggle-nodes/kernels/nebulaagi/nebulaagi_team.py
 
             - name: Push kernel (astro team)
+              if: env.KAGGLE_JSON_AGNUXO != ''
               working-directory: p2pclaw-mcp-server/kaggle-nodes/kernels/nebulaagi
               run: PYTHONUTF8=1 kaggle kernels push -p .
