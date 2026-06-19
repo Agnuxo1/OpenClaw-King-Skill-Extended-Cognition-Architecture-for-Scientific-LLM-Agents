@@ -4,6 +4,15 @@ on:
   schedule:
     - cron: "0 */5 * * *"   # every 5 hours
   workflow_dispatch:
+    inputs:
+      smoke:
+        description: "Run a short scheduler health check instead of the full editor loop"
+        required: false
+        default: "false"
+
+concurrency:
+  group: scientific-editor-${{ github.ref }}
+  cancel-in-progress: false
 
 env:
   GATEWAY: https://p2pclaw-mcp-server-production.up.railway.app
@@ -20,10 +29,20 @@ env:
   HF_TOKEN: ${{ secrets.HF_TOKEN }}
 
 jobs:
+  smoke:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.smoke == 'true' }}
+    name: Scientific editor smoke check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check editor repository availability
+        run: git ls-remote --heads https://github.com/Agnuxo1/p2pclaw-mcp-server.git main
+
   editor-citations:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.smoke != 'true' }}
     name: Dr. Marco Ferreira — Citations
     runs-on: ubuntu-latest
-    timeout-minutes: 280
+    timeout-minutes: 90
     steps:
       - name: Checkout editor files
         run: git clone --depth=1 https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
@@ -40,9 +59,10 @@ jobs:
         run: python p2pclaw-mcp-server/editor/scientific_editor.py
 
   editor-structure:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.smoke != 'true' }}
     name: Dr. Aiko Tanaka — Structure
     runs-on: ubuntu-latest
-    timeout-minutes: 280
+    timeout-minutes: 90
     steps:
       - name: Checkout editor files
         run: git clone --depth=1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
@@ -59,9 +79,10 @@ jobs:
         run: python p2pclaw-mcp-server/editor/scientific_editor.py
 
   editor-stats:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.smoke != 'true' }}
     name: Dr. Priya Sharma — Statistics
     runs-on: ubuntu-latest
-    timeout-minutes: 280
+    timeout-minutes: 90
     steps:
       - name: Checkout editor files
         run: git clone --depth=1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
@@ -78,9 +99,10 @@ jobs:
         run: python p2pclaw-mcp-server/editor/scientific_editor.py
 
   editor-narrative:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.smoke != 'true' }}
     name: Dr. James Okoro — Writing
     runs-on: ubuntu-latest
-    timeout-minutes: 280
+    timeout-minutes: 90
     steps:
       - name: Checkout editor files
         run: git clone --depth=1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
@@ -97,9 +119,10 @@ jobs:
         run: python p2pclaw-mcp-server/editor/scientific_editor.py
 
   editor-archivist:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.smoke != 'true' }}
     name: ARIA-Archive — PDF & Archive
     runs-on: ubuntu-latest
-    timeout-minutes: 280
+    timeout-minutes: 90
     steps:
       - name: Checkout editor files
         run: git clone --depth=1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
@@ -116,9 +139,11 @@ jobs:
         run: python p2pclaw-mcp-server/editor/scientific_editor.py
 
   editor-validator:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.smoke != 'true' }}
     name: PEER-X — LLM Validation
     runs-on: ubuntu-latest
-    timeout-minutes: 280
+    timeout-minutes: 75
+    continue-on-error: true
     steps:
       - name: Checkout editor files
         run: git clone --depth=1 https://github.com/Agnuxo1/p2pclaw-mcp-server.git p2pclaw-mcp-server
