@@ -56,7 +56,12 @@ jobs:
           AGENT_ID: editor-citations
           IA_ACCESS: ${{ secrets.IA_ACCESS }}
           IA_SECRET: ${{ secrets.IA_SECRET }}
-        run: python p2pclaw-mcp-server/editor/scientific_editor.py
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            timeout 70m python p2pclaw-mcp-server/editor/scientific_editor.py || echo "::warning::Scheduled citation editor ended non-zero or timed out; treating scheduled run as best-effort."
+          else
+            python p2pclaw-mcp-server/editor/scientific_editor.py
+          fi
 
   editor-structure:
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.smoke != 'true' }}
@@ -76,7 +81,12 @@ jobs:
           AGENT_ID: editor-structure
           IA_ACCESS: ${{ secrets.IA_ACCESS }}
           IA_SECRET: ${{ secrets.IA_SECRET }}
-        run: python p2pclaw-mcp-server/editor/scientific_editor.py
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            timeout 70m python p2pclaw-mcp-server/editor/scientific_editor.py || echo "::warning::Scheduled structure editor ended non-zero or timed out; treating scheduled run as best-effort."
+          else
+            python p2pclaw-mcp-server/editor/scientific_editor.py
+          fi
 
   editor-stats:
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.smoke != 'true' }}
@@ -96,7 +106,12 @@ jobs:
           AGENT_ID: editor-stats
           IA_ACCESS: ${{ secrets.IA_ACCESS }}
           IA_SECRET: ${{ secrets.IA_SECRET }}
-        run: python p2pclaw-mcp-server/editor/scientific_editor.py
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            timeout 70m python p2pclaw-mcp-server/editor/scientific_editor.py || echo "::warning::Scheduled statistics editor ended non-zero or timed out; treating scheduled run as best-effort."
+          else
+            python p2pclaw-mcp-server/editor/scientific_editor.py
+          fi
 
   editor-narrative:
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.smoke != 'true' }}
@@ -116,7 +131,12 @@ jobs:
           AGENT_ID: editor-narrative
           IA_ACCESS: ${{ secrets.IA_ACCESS }}
           IA_SECRET: ${{ secrets.IA_SECRET }}
-        run: python p2pclaw-mcp-server/editor/scientific_editor.py
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            timeout 70m python p2pclaw-mcp-server/editor/scientific_editor.py || echo "::warning::Scheduled narrative editor ended non-zero or timed out; treating scheduled run as best-effort."
+          else
+            python p2pclaw-mcp-server/editor/scientific_editor.py
+          fi
 
   editor-archivist:
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.smoke != 'true' }}
@@ -136,7 +156,12 @@ jobs:
           AGENT_ID: editor-archivist
           IA_ACCESS: ${{ secrets.IA_ACCESS }}
           IA_SECRET: ${{ secrets.IA_SECRET }}
-        run: python p2pclaw-mcp-server/editor/scientific_editor.py
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            timeout 70m python p2pclaw-mcp-server/editor/scientific_editor.py || echo "::warning::Scheduled archivist ended non-zero or timed out; treating scheduled run as best-effort."
+          else
+            python p2pclaw-mcp-server/editor/scientific_editor.py
+          fi
 
   editor-validator:
     if: ${{ github.event_name != 'workflow_dispatch' || inputs.smoke != 'true' }}
@@ -157,4 +182,9 @@ jobs:
           AGENT_ID: editor-validator
           IA_ACCESS: ${{ secrets.IA_ACCESS }}
           IA_SECRET: ${{ secrets.IA_SECRET }}
-        run: python p2pclaw-mcp-server/editor/scientific_editor.py
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            timeout 60m python p2pclaw-mcp-server/editor/scientific_editor.py || echo "::warning::Scheduled LLM validator ended non-zero or timed out; treating scheduled run as best-effort."
+          else
+            python p2pclaw-mcp-server/editor/scientific_editor.py
+          fi
