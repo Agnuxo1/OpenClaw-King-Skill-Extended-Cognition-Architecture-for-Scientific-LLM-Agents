@@ -2,7 +2,7 @@
 
 Status: ready-to-copy submission package for contests that allow GitHub-based project submissions. Do not submit to Devpost, Kaggle, or sponsor portals until the account owner accepts each event's rules.
 
-Verification date: 2026-06-20
+Verification date: 2026-07-03
 
 ## Target Project
 
@@ -17,10 +17,17 @@ One-line pitch:
 | Contest | Deadline | Fit | Autonomous status |
 | --- | ---: | --- | --- |
 | Global AI Hackathon Series with Qwen Cloud | 2026-07-09 2:00 PM PDT | Multi-agent research workflow on Qwen-compatible infrastructure | Submission copy ready; requires Devpost/Qwen Cloud account and rules acceptance. |
-| Google Cloud Rapid Agent Hackathon | 2026-07-13 | Real-world agent challenge, open-ended AI agent infrastructure | Submission copy ready; requires Devpost account and Google Cloud setup. |
+| AMD Developer Hackathon: ACT II | 2026-07-06 to 2026-07-11 | AMD GPU/cloud agent build, open "Unicorn" track, routing/video/AI app tracks | Submission copy ready; requires lablab.ai + AMD AI Developer Program account/rules. |
 | Agentic AI Innovation Challenge 2026 | 2026-07-31 | General autonomous agents that reason, plan, and act | Submission copy ready; low-risk target if account access is available. |
 | Build with Gemini XPRIZE | 2026-08-17 1:00 PM PDT | Higher bar: impact product, real users, Gemini usage, evidence | Readiness package only; do not submit until user/revenue/impact evidence is real. |
 | Kaggle Pokemon TCG AI Battle Challenge | 2026-08-09 / 2026-08-16 | Agent decision loop and trace logging | Separate plan exists in `docs/contests/kaggle-pokemon-tcg-2026.md`; requires Kaggle rules acceptance. |
+| Biohub - Cell Tracking During Development | 2026-09-22 entry deadline | 3D microscopy cell detection/tracking; best fit for Quantum_BIO_LLMs / bioimage pipeline | Separate plan exists in `docs/contests/biohub-cell-tracking-2026.md`; requires Kaggle rules acceptance and data download. |
+
+## Closed Or Deprioritized
+
+| Contest | Status | Reason |
+| --- | --- | --- |
+| Google Cloud Rapid Agent Hackathon | Closed | Current Devpost/update pages indicate submissions closed in June 2026; no longer a live target on 2026-07-03. |
 
 ## Devpost-Ready Short Description
 
