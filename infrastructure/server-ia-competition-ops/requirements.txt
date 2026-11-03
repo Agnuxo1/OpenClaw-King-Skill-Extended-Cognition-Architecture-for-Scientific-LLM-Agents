@@ -1,0 +1,4 @@
+# Project: Server-IA Competition Oracle Bridge
+# Author: Francisco Angulo de Lafuente | ORCID: 0009-0001-1634-7063
+# Copyright (c) 2026 Francisco Angulo de Lafuente | MIT License
+typesafe-sdk==0.7.0
