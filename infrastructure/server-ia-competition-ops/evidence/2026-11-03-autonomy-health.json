@@ -1,0 +1,48 @@
+{
+  "project": "Server-IA Hierarchical Competition Autonomy",
+  "author": "Francisco Angulo de Lafuente",
+  "orcid": "https://orcid.org/0009-0001-1634-7063",
+  "license": "MIT",
+  "observed_utc": "2026-11-03T21:49:33.956373+00:00",
+  "overall_status": "RESEARCH_DISPATCH_ENABLED_EXPERIMENTS_NOT_VERIFIED",
+  "gateway": "active",
+  "scout_timer": "active",
+  "job_names_and_states": {
+    "competition-boss-orchestration-5h": {
+      "exists": true,
+      "enabled": true,
+      "role_verified": true
+    },
+    "competition-lead-execution-hourly": {
+      "exists": true,
+      "enabled": true,
+      "role_verified": true
+    },
+    "competition-director-quality-gate-2h": {
+      "exists": true,
+      "enabled": true,
+      "role_verified": true
+    }
+  },
+  "native_subagent_runs": 6,
+  "gpu_cards": [
+    {
+      "index": 0,
+      "name": "NVIDIA GeForce RTX 3090",
+      "utilization_percent": 0,
+      "memory_used_mib": 1,
+      "memory_total_mib": 24576
+    },
+    {
+      "index": 1,
+      "name": "NVIDIA GeForce RTX 3090",
+      "utilization_percent": 0,
+      "memory_used_mib": 1,
+      "memory_total_mib": 24576
+    }
+  ],
+  "jev_bridge_verified": true,
+  "new_training_verified": false,
+  "new_contest_submission_verified": false,
+  "provenance_note": "Measured from Server-IA; pre-existing contest submissions are not counted as agent-produced."
+}
