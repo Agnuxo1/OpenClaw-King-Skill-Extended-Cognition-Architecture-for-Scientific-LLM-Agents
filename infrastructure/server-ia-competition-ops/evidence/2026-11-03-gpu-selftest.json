@@ -1,0 +1,38 @@
+{
+  "project": "Server-IA Competition Scientific Hardware Diagnostic",
+  "author": "Francisco Angulo de Lafuente",
+  "orcid": "https://orcid.org/0009-0001-1634-7063",
+  "license": "MIT",
+  "observed_utc": "2026-11-03T22:05:56.279315+00:00",
+  "test_type": "quick_cuda_matmul_only_not_training",
+  "results": [
+    {
+      "physical_gpu": 0,
+      "passed": true,
+      "card": "NVIDIA GeForce RTX 3090",
+      "available": true,
+      "checksum": 113069976.0,
+      "mem_max_mb": 14.9,
+      "tested_matmul": [
+        768,
+        768
+      ],
+      "torch": "2.14.1+cu130"
+    },
+    {
+      "physical_gpu": 1,
+      "passed": true,
+      "card": "NVIDIA GeForce RTX 3090",
+      "available": true,
+      "checksum": 113069976.0,
+      "mem_max_mb": 14.9,
+      "tested_matmul": [
+        768,
+        768
+      ],
+      "torch": "2.14.1+cu130"
+    }
+  ],
+  "passed": true,
+  "scientific_scope": "CUDA device health check only; NOT contest model training, not evidence of accuracy."
+}

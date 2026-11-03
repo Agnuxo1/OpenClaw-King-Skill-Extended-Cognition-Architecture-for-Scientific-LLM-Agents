@@ -40,7 +40,7 @@ flowchart TD
 | Automated competition verification | Demonstrated | Codabench and Virtual Cell reports written by agent workers |
 | GPU competition training | **Not verified** | Two RTX 3090 GPUs idle at last inspection; no compliant training lease |
 | Official contest entry from this deployment | **Not verified** | Initial Gmail reconciliation revealed pre-existing organizer receipts |
-| Full top-down hierarchy | **Not yet demonstrated** | Boss/Director cron jobs enabled; live end-to-end delegation pending |
+| Full top-down hierarchy | One real run completed | Boss Fable -> Director Opus -> Research/Engineering Leads Sonnet -> five Haiku workers; first boss native cron receipt 2026-11-03 21:51 UTC |
 
 ## Installed Server-IA paths
 
@@ -111,8 +111,31 @@ The existing five-hour systemd scout is independent from agent turns; both must 
 - Research Lead spawned Haiku Worker-01, which created a Virtual Cell official-rules report.
 - The JEV oracle was queried *on the Linux server* and returned a signed-request-hash-associated receipt recommending official-rule verification first and guarded shared GPU usage.
 
-The system is **partially operational and under verification**, not yet a proven fully autonomous contest submission pipeline. Please do not describe it as automatically winning competitions or running GPU models until an actual training/contest receipt verifies that step.
+The system has **completed a live full top-down research delegation cycle** but remains partially operational for experiments, Gmail automation and contest submissions; it is not yet a proven fully autonomous contest submission pipeline. Please do not describe it as automatically winning competitions or running GPU models until an actual training/contest receipt verifies that step.
 
 ## Attribution and citation
 
 Copyright © 2026 Francisco Angulo de Lafuente. ORCID: [0009-0001-1634-7063](https://orcid.org/0009-0001-1634-7063). **MIT License** for original bridge, policies and documentation supplied under this folder. Keep original OpenClaw authorship and third-party licenses intact. Responsible reuse requires preservation of notices; a license notice does not guarantee that all derivative users will provide academic citations.
+
+
+## Evidence update ? completed full hierarchy and CUDA hardware checks
+
+The first Fable Boss scheduler run on 3 Nov 2026 (21:39?21:52 UTC)
+completed successfully, spawned an Opus Director, which spawned two Sonnet
+leads and five Haiku workers. Each worker's own source-backed output was
+observed on Server-IA. This verifies research delegation but not automatic
+contest submission. The Gmail connector snapshot independently confirmed two
+already-scored Virtual Cell entries; the Boss's original missing-registration
+conclusion was corrected with a second real JEV decision.
+
+A bounded CUDA smoke test ran on *both* RTX 3090 cards with PyTorch
+2.14.1+cu130, 768?768 matmul, 14.9 MiB peak allocated per isolated worker.
+Both succeeded with deterministic checksum 113069976.0. See
+[GPU evidence](evidence/2026-11-03-gpu-selftest.json).
+The diagnostic is not a training benchmark, and GPU competition training
+remains gated by scientific evidence and the existing shared queue.
+
+The separate [Sleep Onset scientific audit](https://github.com/Agnuxo1/holographic-reservoir-sleep-onset/blob/main/experiments/SERVER_IA_REPRODUCTION_20261103.md)
+documents the successful synthetic model-ladder tests after pinning the
+missing public PyPI Holographic Reservoir dependency, together with the
+limitations of the still-unreproduced official score.
