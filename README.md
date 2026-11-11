@@ -37,6 +37,10 @@ New install? Start here: [Getting started](https://docs.openclaw.ai/start/gettin
 
 Model note: while any model is supported, I strongly recommend **Anthropic Pro/Max (100/200) + Opus 4.6** for long‑context strength and better prompt‑injection resistance. See [Onboarding](https://docs.openclaw.ai/start/onboarding).
 
+<!-- impact-note:start -->
+<sub><strong>Efficiency and practical value.</strong> This repository builds on OpenClaw’s reusable gateway, messaging channels and workspace skills, providing a base for experiments in scientific-agent orchestration without recreating the assistant infrastructure. Its practical advantage is reuse of an existing runtime and setup workflow. Additional cognitive or token-efficiency gains require separate evaluation; see the inherited <a href="https://docs.openclaw.ai/start/getting-started">OpenClaw documentation</a>.</sub>
+<!-- impact-note:end -->
+
 ## Models (selection + auth)
 
 - Models config + CLI: [Models](https://docs.openclaw.ai/concepts/models)
